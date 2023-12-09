@@ -17,31 +17,31 @@ services:
       - net.ipv6.conf.all.disable_ipv6=1  # Recomended if using ipv4 only
     restart:
       unless-stopped
-  # chat-service:
-  #   container_name: chat-service
-  #   build: 
-  #     context: ./backend/chat-service
-  #     dockerfile: Dockerfile
-  #     target: dev
-  #   volumes:
-  #     - ./backend/chat-service:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - vpn
-  #   network_mode: service:vpn
+  chat-service:
+    container_name: chat-service
+    build: 
+      context: ./backend/chat-service
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/chat-service:/app
+      - /app/node_modules
+    depends_on:
+      - vpn
+    network_mode: service:vpn
 
-  # ocr-service:
-  #   container_name: ocr-service
-  #   build: 
-  #     context: ./backend/ocr-service
-  #     dockerfile: Dockerfile
-  #     target: dev
-  #   volumes:
-  #     - ./backend/ocr-service:/app
-  #     - /app/node_modules
-  #   depends_on:
-  #     - vpn
-  #   network_mode: service:vpn
+  ocr-service:
+    container_name: ocr-service
+    build: 
+      context: ./backend/ocr-service
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/ocr-service:/app
+      - /app/node_modules
+    depends_on:
+      - vpn
+    network_mode: service:vpn
 
   chatgpt:
     container_name: chatgpt
@@ -55,6 +55,6 @@ services:
       - /app/node_modules
     depends_on:
       - vpn
-      # - chat-service
-      # - ocr-service
+      - chat-service
+      - ocr-service
     network_mode: service:vpn
