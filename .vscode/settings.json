@@ -1,0 +1,7 @@
+{
+    "eslint.workingDirectories": [
+        "./backend/chat-service",
+        "./backend/ocr-service",
+        "./frontend"
+    ]
+}
