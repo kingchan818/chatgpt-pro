@@ -8,6 +8,6 @@ async function bootstrap() {
   app.useLogger(app.get(CustomLoggerService));
   const configuration = app.get(ConfigService);
 
-  await app.listen(configuration.get<number>('port'));
+  await app.listen(configuration.get<number>('http.port'));
 }
 bootstrap();

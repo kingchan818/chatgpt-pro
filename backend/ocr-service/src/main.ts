@@ -7,6 +7,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { logger: false });
   app.useLogger(app.get(CustomLoggerService));
   const configuration = app.get(ConfigService);
-  await app.listen(configuration.get<number>('port'));
+  await app.listen(configuration.get<number>('http.port'));
 }
 bootstrap();
