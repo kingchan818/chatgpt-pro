@@ -1,0 +1,60 @@
+version: '3.5'
+
+services:
+  vpn:
+    image: bubuntux/nordvpn
+    container_name: nordvpn
+    cap_add:
+      - NET_ADMIN               # Required if you want to use OpenVPN protocol (UDP or TCP): https://support.nordvpn.com/Connectivity/Linux/1047411192/Installing-and-using-NordVPN-on-Debian-Ubuntu-Elementary-OS-and-Linux-Mint.htm
+      - NET_RAW                 # Required
+    env_file: # Review https://github.com/bubuntux/nordvpn#environment-variables
+      - ./docker-env/nordvpn.env
+    ports: # dev ports
+      - 3000:3000
+      - 8181:8181
+      - 8282:8282
+    sysctls:
+      - net.ipv6.conf.all.disable_ipv6=1  # Recomended if using ipv4 only
+    restart:
+      unless-stopped
+      
+  chat-service:
+    container_name: chat-service
+    build: 
+      context: ./backend/chat-service
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/chat-service:/app
+      - /app/node_modules
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+
+  ocr-service:
+    container_name: ocr-service
+    build: 
+      context: ./backend/ocr-service
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/ocr-service:/app
+      - /app/node_modules
+    depends_on:
+      - vpn
+    network_mode: service:vpn
+
+  chatgpt:
+    container_name: chatgpt
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - vpn
+      - chat-service
+      - ocr-service
+    network_mode: service:vpn
