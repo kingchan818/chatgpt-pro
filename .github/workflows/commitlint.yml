@@ -1,4 +1,4 @@
-name: COMMITLINT
+name: Validate commit message
 
 on: [pull_request]
 
