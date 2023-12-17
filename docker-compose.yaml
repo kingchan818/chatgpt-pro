@@ -50,6 +50,8 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       target: dev
+    env_file:
+      - ./docker-env/frontend.env
     volumes:
       - ./frontend:/app
       - /app/node_modules
