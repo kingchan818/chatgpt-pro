@@ -1,32 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import styled from 'styled-components';
 import PropTypes from 'prop-types';
 import { ReactComponent as ChatGPTSvg } from '../assets/chatgpt-24.svg';
 
-SideBar.propTypes = {
-  chats: PropTypes.arrayOf(
-    PropTypes.shape({
-      sessionId: PropTypes.number.isRequired,
-      name: PropTypes.string.isRequired,
-    }),
-  ).isRequired,
-};
-
-export default function SideBar(props) {
+const SideBar = forwardRef((props, ref) => {
   const { chats = [] } = props;
 
-  const [isCreatedChatClicked, setIsCreatechatClicked] = useState(false);
+  const [isCreatedChatClicked, setIsCreateChatClicked] = useState(false);
 
   const createNewChat = () => {
-    setIsCreatechatClicked(!isCreatedChatClicked);
+    setIsCreateChatClicked(!isCreatedChatClicked);
     setTimeout(() => {
-      setIsCreatechatClicked(false);
+      setIsCreateChatClicked(false);
     }, 150);
   };
 
   return (
-    <StyledDiv className="bg-black text-white flex flex-col h-screen text-sm">
+    <StyledDiv className="bg-black text-white flex flex-col h-screen text-sm w-[250px]" ref={ref}>
       <button
         type="button"
         className={`flex items-center cursor-pointer font-medium m-4 cust-hover justify-between rounded-md p-2 ${isCreatedChatClicked ? 'clicked' : ''}`}
@@ -50,7 +41,18 @@ export default function SideBar(props) {
 
     </StyledDiv>
   );
-}
+});
+
+SideBar.propTypes = {
+  chats: PropTypes.arrayOf(
+    PropTypes.shape({
+      sessionId: PropTypes.number.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ).isRequired,
+};
+
+export default SideBar;
 
 const StyledDiv = styled.div`
   .cust-hover:hover {
