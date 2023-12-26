@@ -1,7 +1,8 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { CustomLoggerModule } from './logger/logger.module';
 import { CustomLoggerService } from './logger/logger.service';
@@ -9,6 +10,19 @@ import { CustomLoggerService } from './logger/logger.service';
 @Module({
   imports: [
     ConfigModule.forRoot({ load: [configuration] }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => {
+        const host = configService.get<string>('mongodb.host');
+        const port = configService.get('mongodb.port');
+        const database = configService.get<string>('mongodb.database');
+        return {
+          uri: `mongodb://${host}:${port}/${database}`,
+          directConnection: true,
+        };
+      },
+      inject: [ConfigService],
+    }),
     CustomLoggerModule,
   ],
   controllers: [AppController],

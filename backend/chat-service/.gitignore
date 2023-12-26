@@ -37,4 +37,4 @@ lerna-debug.log*
 # sercets
 .env
 .env.*
-*config.yaml
+local.config.yaml

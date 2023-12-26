@@ -13,6 +13,7 @@ services:
       - 3000:3000
       - 8181:8181
       - 8282:8282
+      - 27017:27017
     sysctls:
       - net.ipv6.conf.all.disable_ipv6=1  # Recomended if using ipv4 only
     restart:
@@ -43,6 +44,7 @@ services:
     depends_on:
       - vpn
     network_mode: service:vpn
+    restart: unless-stopped
 
   chatgpt:
     container_name: chatgpt
@@ -60,3 +62,12 @@ services:
       - chat-service
       - ocr-service
     network_mode: service:vpn
+    restart: unless-stopped
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    network_mode: service:vpn
+    volumes:
+      - ./data/db:/data/db

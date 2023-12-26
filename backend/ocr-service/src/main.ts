@@ -5,7 +5,7 @@ import { CustomLoggerService } from './logger/logger.service';
 import { RequestInterceptor } from './request/request.interceptor';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule, { logger: false });
+  const app = await NestFactory.create(AppModule);
   app.useLogger(app.get(CustomLoggerService));
   app.useGlobalInterceptors(new RequestInterceptor());
   const configuration = app.get(ConfigService);

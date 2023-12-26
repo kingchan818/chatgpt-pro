@@ -1,0 +1,15 @@
+name: 'chatgpt-chat-service'
+
+http:
+  host: 'localhost'
+  port: 8181
+
+salt: 'chatgpt-chat-service'
+
+mongodb:
+  uris: 'mongodb://localhost:27017'
+  database: 'chatgpt-pro'
+  options:
+    noDelay: true
+    retryAttempts: 1
+    directConnection: true
