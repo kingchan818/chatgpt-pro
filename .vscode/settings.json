@@ -3,5 +3,22 @@
         "./backend/chat-service",
         "./backend/ocr-service",
         "./frontend"
-    ]
+    ],
+    "cSpell.ignoreWords": [
+        "openAIAPIKey",
+        "ChatGPTAPI",
+        "openai",
+        "openAIAPIOrg",
+        "Supabase"
+    ],
+    "prettier.enable": true,
+    "files.exclude": {
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true,
+        "**/node_modules": true
+    },
 }

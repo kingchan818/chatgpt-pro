@@ -1,0 +1,10 @@
+name: 'chatgpt-chat-service'
+
+http:
+  host: 'localhost'
+  port: 8282
+
+mongodb:
+  host: 'localhost'
+  port: 27017
+  database: 'chatgpt-pro'

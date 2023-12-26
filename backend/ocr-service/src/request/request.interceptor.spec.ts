@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RequestInterceptor } from './request.interceptor';
-import { ExecutionContext, CallHandler } from '@nestjs/common';
+import { CallHandler } from '@nestjs/common';
 import { Observable } from 'rxjs';
 
 describe('RequestInterceptor', () => {
@@ -35,7 +35,7 @@ describe('RequestInterceptor', () => {
     const context = {
       switchToHttp: () => ({
         getRequest: () => ({
-          now: null
+          now: null,
         }),
       }),
     };
