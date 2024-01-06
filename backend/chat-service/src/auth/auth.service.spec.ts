@@ -69,9 +69,7 @@ describe('AuthService', () => {
 
     const result = await service.validateOpenAIAPIKey(requestId, openAIAPIKey);
 
-    expect(logger.log).toHaveBeenCalledWith(
-      `[${requestId}] -- Validate openAIAPIKey`,
-    );
+    expect(logger.log).toHaveBeenCalledWith(`[${requestId}] -- Validate openAIAPIKey`);
     expect(chatgptService.init).toHaveBeenCalledWith(openAIAPIKey);
     expect(result).toBe(true);
   });

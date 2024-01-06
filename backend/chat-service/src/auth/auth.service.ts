@@ -20,10 +20,7 @@ export class AuthService {
     return false;
   }
 
-  async validateOpenAIAPIKey(
-    requestId: string,
-    openAIAPIKey: string,
-  ): Promise<boolean> {
+  async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
     try {
       this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
       const chatgptInstance = await this.chatgptService.init(openAIAPIKey);

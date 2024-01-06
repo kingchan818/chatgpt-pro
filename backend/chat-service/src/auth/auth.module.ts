@@ -7,11 +7,7 @@ import { ChatgptModule } from '../chatgpt/chatgpt.module';
 import configuration from '../config/configuration';
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({ load: [configuration] }),
-    ChatgptModule,
-    UserModule,
-  ],
+  imports: [ConfigModule.forRoot({ load: [configuration] }), ChatgptModule, UserModule],
   controllers: [AuthController],
   providers: [AuthService],
   exports: [AuthService],

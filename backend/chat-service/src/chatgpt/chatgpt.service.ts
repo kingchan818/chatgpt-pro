@@ -1,9 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-export const importDynamic = new Function(
-  'modulePath',
-  'return import(modulePath)',
-);
+export const importDynamic = new Function('modulePath', 'return import(modulePath)');
 
 @Injectable()
 export class ChatgptService {
