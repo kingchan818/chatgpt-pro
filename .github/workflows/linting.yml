@@ -1,0 +1,44 @@
+name: Apply linting rules
+
+on : [push, pull_request]
+
+jobs:
+  eslint-prettier:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Using Nodejs
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Cache npm dependencies
+        uses: actions/cache@v3
+        with:
+          path: '~/.npm'
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install Chat Service dev dependencies
+        working-directory: ./backend/chat-service
+        run: npm install --only=dev
+      - name: Run linting
+        working-directory: ./backend/chat-service
+        run: npm run lint
+
+
+      - name: Install OCR Service dev dependencies
+        working-directory: ./backend/ocr-service
+        run: npm install --only=dev
+      - name: Run linting
+        working-directory: ./backend/ocr-service
+        run: npm run lint
+
+      
+      - name: Install Frontend dev dependencies
+        working-directory: ./frontend
+        run: npm install --only=dev
+      - name: Run linting
+        working-directory: ./backend/ocr-service
+        run: npm run lint
