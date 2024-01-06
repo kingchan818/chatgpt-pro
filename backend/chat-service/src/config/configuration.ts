@@ -2,8 +2,7 @@ import { readFileSync, existsSync } from 'fs';
 import * as yaml from 'js-yaml';
 import { join } from 'path';
 
-const ENV =
-  process.env.NODE_ENV === 'test' ? 'dev' : process.env.NODE_ENV || 'dev';
+const ENV = process.env.NODE_ENV === 'test' ? 'dev' : process.env.NODE_ENV || 'dev';
 
 const YAML_CONFIG_FILENAME = `${ENV}.config.yaml`;
 const YAML_LOCAL_CONFIG = 'local.config.yaml';

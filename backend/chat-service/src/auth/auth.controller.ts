@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  HttpStatus,
-  Post,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
@@ -23,10 +16,7 @@ export class AuthController {
   @Post('register')
   async registerOpenAPIKey(@Req() req, @Body() body: { openAIAPIKey: string }) {
     const { openAIAPIKey } = body;
-    const isValidApiKey = await this.authService.validateOpenAIAPIKey(
-      req.requestId,
-      openAIAPIKey,
-    );
+    const isValidApiKey = await this.authService.validateOpenAIAPIKey(req.requestId, openAIAPIKey);
     if (isValidApiKey) {
       const hasedToken = hash(openAIAPIKey, this.configService.get('salt'));
       const user = await this.userService.create(req.requestId, {
@@ -48,10 +38,7 @@ export class AuthController {
       if (foundUser) {
         return { apiKey: foundUser.apiKeys[foundUser.apiKeys.length - 1] };
       } else {
-        throw new HttpException(
-          'Unknow Error',
-          HttpStatus.INTERNAL_SERVER_ERROR,
-        );
+        throw new HttpException('Unknow Error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
     throw new HttpException('Unknow Error', HttpStatus.INTERNAL_SERVER_ERROR);

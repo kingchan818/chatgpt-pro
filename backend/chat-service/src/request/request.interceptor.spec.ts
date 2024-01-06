@@ -73,9 +73,7 @@ describe('RequestInterceptor', () => {
       handle: () => new Observable(),
     };
 
-    jest
-      .spyOn(authService, 'validateUser')
-      .mockReturnValue(Promise.resolve(true));
+    jest.spyOn(authService, 'validateUser').mockReturnValue(Promise.resolve(true));
 
     interceptor.intercept(context as any, next);
 
@@ -107,12 +105,8 @@ describe('RequestInterceptor', () => {
 
     interceptor.intercept(context as any, next).subscribe({
       complete: () => {
-        const logStart = `[${context.getClass().name}.${
-          context.getHandler().name
-        }] START [`;
-        const logEnd = `[${context.getClass().name}.${
-          context.getHandler().name
-        }] END [`;
+        const logStart = `[${context.getClass().name}.${context.getHandler().name}] START [`;
+        const logEnd = `[${context.getClass().name}.${context.getHandler().name}] END [`;
 
         expect(spy.mock.calls[0][0]).toContain(logStart);
         expect(spy.mock.calls[1][0]).toContain(logEnd);

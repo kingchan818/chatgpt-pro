@@ -17,10 +17,7 @@ import { MongoExceptionFilter } from './filters/mongo-exception.filter';
     ConfigModule.forRoot({ load: [configuration] }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: async (
-        configService: ConfigService,
-        logger: CustomLoggerService,
-      ) => {
+      useFactory: async (configService: ConfigService, logger: CustomLoggerService) => {
         const uris = configService.get<string>('mongodb.uris');
         const database = configService.get<string>('mongodb.database');
         const replicaSet = configService.get<string>('mongodb.replicaSet');
@@ -69,14 +66,8 @@ export class AppModule {
     private configureService: ConfigService,
     private logger: CustomLoggerService,
   ) {
-    this.logger.log(
-      `Running in ${process.env.ENV || 'dev'} mode`,
-      AppModule.name,
-    );
+    this.logger.log(`Running in ${process.env.ENV || 'dev'} mode`, AppModule.name);
 
-    this.logger.log(
-      `Listening on port ${this.configureService.get<number>('http.port')}`,
-      AppModule.name,
-    );
+    this.logger.log(`Listening on port ${this.configureService.get<number>('http.port')}`, AppModule.name);
   }
 }

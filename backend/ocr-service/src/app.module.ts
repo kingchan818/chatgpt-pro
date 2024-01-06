@@ -33,14 +33,8 @@ export class AppModule {
     private configureService: ConfigService,
     private logger: CustomLoggerService,
   ) {
-    this.logger.log(
-      `Running in ${process.env.ENV || 'dev'} mode`,
-      AppModule.name,
-    );
+    this.logger.log(`Running in ${process.env.ENV || 'dev'} mode`, AppModule.name);
 
-    this.logger.log(
-      `Listening on port ${this.configureService.get<number>('http.port')}`,
-      AppModule.name,
-    );
+    this.logger.log(`Listening on port ${this.configureService.get<number>('http.port')}`, AppModule.name);
   }
 }

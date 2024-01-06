@@ -37,11 +37,9 @@ export class RequestInterceptor implements NestInterceptor {
     }
 
     this.logger.log(
-      `[${className}.${handlerName}] START [${request.requestId}] - ${
-        request.method
-      } ${request.url} params: ${JSON.stringify(
-        request.params,
-      )} body: ${JSON.stringify(request.body)}`,
+      `[${className}.${handlerName}] START [${request.requestId}] - ${request.method} ${
+        request.url
+      } params: ${JSON.stringify(request.params)} body: ${JSON.stringify(request.body)}`,
       RequestInterceptor.name,
     );
 
@@ -50,11 +48,9 @@ export class RequestInterceptor implements NestInterceptor {
       .pipe(
         tap(() =>
           this.logger.log(
-            `[${className}.${handlerName}] END [${request.requestId}]  - ${
-              request.method
-            } ${request.url} params: ${JSON.stringify(
-              request.params,
-            )} body: ${JSON.stringify(request.body)}`,
+            `[${className}.${handlerName}] END [${request.requestId}]  - ${request.method} ${
+              request.url
+            } params: ${JSON.stringify(request.params)} body: ${JSON.stringify(request.body)}`,
             RequestInterceptor.name,
           ),
         ),

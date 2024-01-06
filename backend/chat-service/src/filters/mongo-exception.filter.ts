@@ -1,18 +1,9 @@
-import {
-  Catch,
-  ExceptionFilter,
-  ArgumentsHost,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Catch, ExceptionFilter, ArgumentsHost, HttpException, HttpStatus } from '@nestjs/common';
 import { MongoError } from 'mongodb';
 import { Request, Response } from 'express';
 
 @Catch(MongoError)
-export class MongoExceptionFilter
-  extends HttpException
-  implements ExceptionFilter
-{
+export class MongoExceptionFilter extends HttpException implements ExceptionFilter {
   catch(exception: MongoError, host: ArgumentsHost) {
     const ctx = host.switchToHttp();
     const response = ctx.getResponse<Response>();
