@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { RequestInterceptor } from './request.interceptor';
 import { CallHandler } from '@nestjs/common';
-import { Observable, of } from 'rxjs';
+import { Observable, of, from } from 'rxjs';
 import { CustomLoggerService } from '../logger/logger.service';
 import { AuthService } from '../auth/auth.service';
 
@@ -23,7 +23,7 @@ describe('RequestInterceptor', () => {
         {
           provide: AuthService,
           useValue: {
-            validateUser: jest.fn(),
+            validateAndReturnUser: jest.fn(),
           },
         },
       ],
@@ -73,7 +73,9 @@ describe('RequestInterceptor', () => {
       handle: () => new Observable(),
     };
 
-    jest.spyOn(authService, 'validateUser').mockReturnValue(Promise.resolve(true));
+    jest
+      .spyOn(authService, 'validateAndReturnUser')
+      .mockReturnValue(Promise.resolve({ openAIToken: 'test-token' } as any));
 
     interceptor.intercept(context as any, next);
 
@@ -103,7 +105,7 @@ describe('RequestInterceptor', () => {
 
     const spy = jest.spyOn(logger, 'log');
 
-    interceptor.intercept(context as any, next).subscribe({
+    from(interceptor.intercept(context as any, next)).subscribe({
       complete: () => {
         const logStart = `[${context.getClass().name}.${context.getHandler().name}] START [`;
         const logEnd = `[${context.getClass().name}.${context.getHandler().name}] END [`;

@@ -53,11 +53,11 @@ describe('AuthService', () => {
     jest.spyOn(logger, 'log');
     jest.spyOn(userService, 'findOne').mockResolvedValue(userModel);
 
-    const result = await service.validateUser(requestId, apiKey);
+    const result = await service.validateAndReturnUser(requestId, apiKey);
 
     expect(logger.log).toHaveBeenCalledWith(`[${requestId}] -- Validate user`);
-    expect(userService.findOne).toHaveBeenCalledWith(requestId, apiKey);
-    expect(result).toBe(true);
+    expect(userService.findOne).toHaveBeenCalledWith(requestId, { apiKey });
+    expect(result).toBe(userModel);
   });
 
   it('should validate openAIAPIKey', async () => {

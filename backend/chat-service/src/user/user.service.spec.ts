@@ -103,9 +103,9 @@ describe('UserService', () => {
       };
       jest.spyOn(userModel, 'findOne').mockResolvedValue(foundUser);
 
-      const result = await service.findOne('requestId', apiKey);
+      const result = await service.findOne('requestId', { apiKey });
 
-      expect(userModel.findOne).toHaveBeenCalledWith({ apiKeys: apiKey });
+      expect(userModel.findOne).toHaveBeenCalledWith({ apiKey: apiKey });
       expect(result).toEqual(foundUser);
     });
   });

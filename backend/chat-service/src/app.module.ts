@@ -11,6 +11,8 @@ import { RequestInterceptor } from './request/request.interceptor';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { MongoExceptionFilter } from './filters/mongo-exception.filter';
+import { TransactionModule } from './transaction/transaction.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -47,6 +49,8 @@ import { MongoExceptionFilter } from './filters/mongo-exception.filter';
     CustomLoggerModule,
     AuthModule,
     UserModule,
+    TransactionModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [

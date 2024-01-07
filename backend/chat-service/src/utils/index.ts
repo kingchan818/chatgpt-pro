@@ -1,3 +1,4 @@
-import { hash } from './crypto';
+import { decrypt, encrypt } from './crypto';
+import { generateUniqueKey } from './common';
 
-export { hash };
+export { decrypt, encrypt, generateUniqueKey };

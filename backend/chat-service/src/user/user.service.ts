@@ -1,11 +1,13 @@
+import { Model } from 'mongoose';
+
 import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+
+import { CustomLoggerService } from '../logger/logger.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
 import { User } from './schema/user.shcema';
-import { Model } from 'mongoose';
-import { v4 as uuidV4 } from 'uuid';
-import { CustomLoggerService } from '../logger/logger.service';
+import { generateUniqueKey } from '../utils';
 
 @Injectable()
 export class UserService {
@@ -14,13 +16,9 @@ export class UserService {
     private readonly logger: CustomLoggerService,
   ) {}
 
-  generateApiKey() {
-    return uuidV4().replace(/-/g, '');
-  }
-
   create(requestId: string, createUserDto: CreateUserDto) {
     this.logger.log(`[${requestId}] -- Create new user`);
-    const apiKey = this.generateApiKey();
+    const apiKey = generateUniqueKey();
     createUserDto.apiKeys = [apiKey];
     return this.userModel.create(createUserDto);
   }
@@ -30,7 +28,7 @@ export class UserService {
     await this.userModel
       .updateOne({
         $push: {
-          apiKeys: this.generateApiKey(),
+          apiKeys: generateUniqueKey(),
         },
       })
       .exec();
@@ -40,11 +38,9 @@ export class UserService {
     return `This action returns all user`;
   }
 
-  findOne(requestId: string, apiKey: string) {
-    this.logger.log(`[${requestId}] -- Find user by API key`);
-    return this.userModel.findOne({
-      apiKeys: apiKey,
-    });
+  findOne(requestId: string, documentFields: Record<string, any>) {
+    this.logger.log(`[${requestId}] -- Find user by document fields`);
+    return this.userModel.findOne(documentFields);
   }
 
   async update(requestId: string, updateUserDto: UpdateUserDto) {

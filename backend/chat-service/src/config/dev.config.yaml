@@ -4,7 +4,7 @@ http:
   host: 'localhost'
   port: 8181
 
-salt: 'chatgpt-chat-service'
+aes-key: 'chatgpt-chat-service'
 
 mongodb:
   uris: 'mongodb://localhost:27017'
@@ -13,3 +13,12 @@ mongodb:
     noDelay: true
     retryAttempts: 1
     directConnection: true
+
+chatgpt:
+  systemMessage: 'You are an AI that is playing the role of a 10 years experience software engineer.'
+  debug: false
+  systemMessageDelay: 1000
+  timeoutMs: 160000
+  completionParams:
+    model: 'gpt-3.5-turbo'
+    temperature: 0.9

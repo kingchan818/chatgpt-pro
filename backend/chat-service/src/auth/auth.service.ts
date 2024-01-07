@@ -1,4 +1,4 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ChatgptService } from '../chatgpt/chatgpt.service';
 import { CustomLoggerService } from '../logger/logger.service';
 import { UserService } from '../user/user.service';
@@ -11,22 +11,19 @@ export class AuthService {
     private userService: UserService,
   ) {}
 
-  async validateUser(requestId: string, apiKey: string): Promise<boolean> {
+  async validateAndReturnUser(requestId: string, apiKey: string) {
     this.logger.log(`[${requestId}] -- Validate user`);
-    const foundUser = await this.userService.findOne(requestId, apiKey);
-    if (!isNil(foundUser)) {
-      return true;
+    const foundUser = await this.userService.findOne(requestId, { apiKeys: apiKey });
+    if (isNil(foundUser)) {
+      throw new HttpException('Invalid API key', HttpStatus.FORBIDDEN);
     }
-    return false;
+    return foundUser;
   }
 
   async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
     try {
       this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
-      const chatgptInstance = await this.chatgptService.init(openAIAPIKey);
-      if (!chatgptInstance) {
-        return false;
-      }
+      await this.chatgptService.init(openAIAPIKey);
       return true;
     } catch (e) {
       throw new HttpException(e.message || 'Invalid API key', 500);
