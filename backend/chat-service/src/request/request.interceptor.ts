@@ -1,24 +1,21 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NestInterceptor,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common';
 import { Observable, tap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomLoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
+import { ConfigService } from '@nestjs/config';
+import { decrypt } from '../utils/crypto';
+import { get } from 'lodash';
 
 @Injectable()
 export class RequestInterceptor implements NestInterceptor {
   constructor(
     private logger: CustomLoggerService,
     private authService: AuthService,
+    private configService: ConfigService,
   ) {}
 
-  intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
+  async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
     const className = context.getClass().name;
     const handlerName = context.getHandler().name;
     const request = context.switchToHttp().getRequest();
@@ -28,12 +25,15 @@ export class RequestInterceptor implements NestInterceptor {
     request.userAgent = headers['user-agent']; // Add the user agent to the request object
 
     if (headers['x-auth-key']) {
-      const token = headers['x-auth-key'].toString();
-      const validUser = this.authService.validateUser(request.requestId, token);
-      if (!validUser) {
-        throw new HttpException('Invalid API key', HttpStatus.FORBIDDEN);
-      }
-      request.apiKey = token;
+      const userApiKey = headers['x-auth-key'].toString();
+      const currentUser = await this.authService.validateAndReturnUser(request.requestId, userApiKey);
+      const openAITKey = decrypt(get(currentUser, 'openAIToken'), this.configService.get<string>('aes-key'));
+      request.currentUser = { openAITKey, userApiKey };
+    }
+
+    if (request.url.includes('sse')) {
+      // TODO: if the request is a SSE request, we won't log it for now
+      return next.handle();
     }
 
     this.logger.log(

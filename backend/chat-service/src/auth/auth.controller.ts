@@ -2,7 +2,7 @@ import { Body, Controller, HttpException, HttpStatus, Post, Req } from '@nestjs/
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { ConfigService } from '@nestjs/config';
-import { hash } from '../utils';
+import { encrypt } from '../utils';
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +18,7 @@ export class AuthController {
     const { openAIAPIKey } = body;
     const isValidApiKey = await this.authService.validateOpenAIAPIKey(req.requestId, openAIAPIKey);
     if (isValidApiKey) {
-      const hasedToken = hash(openAIAPIKey, this.configService.get('salt'));
+      const hasedToken = encrypt(openAIAPIKey, this.configService.get('aes-key'));
       const user = await this.userService.create(req.requestId, {
         openAIToken: hasedToken,
       });

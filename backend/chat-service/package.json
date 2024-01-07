@@ -30,6 +30,7 @@
     "axios": "^1.6.3",
     "chatgpt": "^5.2.5",
     "crypto-js": "^4.2.0",
+    "gpt-tokens": "^1.2.0",
     "mongoose": "^8.0.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",

@@ -50,7 +50,7 @@ describe('AuthController', () => {
       const requestId = 'test-request-id';
       const openAIAPIKey = 'valid-api-key';
       const user: any = { apiKeys: ['api-key'] };
-      const configSpy = jest.spyOn(configService, 'get').mockReturnValue('salt');
+      const configSpy = jest.spyOn(configService, 'get').mockReturnValue('aes-key');
       const createSpy = jest.spyOn(userService, 'create').mockResolvedValue(user);
       const validateSpy = jest.spyOn(authService, 'validateOpenAIAPIKey').mockResolvedValue(true);
 
@@ -58,7 +58,7 @@ describe('AuthController', () => {
       const result = await controller.registerOpenAPIKey({ requestId }, { openAIAPIKey });
 
       // Assert
-      expect(configSpy).toHaveBeenCalledWith('salt');
+      expect(configSpy).toHaveBeenCalledWith('aes-key');
       expect(validateSpy).toHaveBeenCalledWith(requestId, openAIAPIKey);
       expect(createSpy).toHaveBeenCalledTimes(1);
       expect(result).toEqual({ apiKey: user.apiKeys[0] });
