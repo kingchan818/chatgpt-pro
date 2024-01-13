@@ -71,7 +71,6 @@ export default function Home() {
         </StyledHome>
       </MainContent>
     </div>
-
   );
 }
 
@@ -81,11 +80,10 @@ const StyledHome = styled.div`
   justify-content: space-between;
   height: 100vh;
   width: 100%;
-
 `;
 
 const MainContent = styled.div`
-  transition: margin-left .5s;
+  transition: margin-left 0.5s;
   background: #343541;
   color: #000;
   margin-left: ${(props) => (props.isOpen ? '250px' : '0')};

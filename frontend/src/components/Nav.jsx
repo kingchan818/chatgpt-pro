@@ -11,12 +11,7 @@ Nav.propTypes = {
 };
 
 export default function Nav(props) {
-  const {
-    sideBarToggled,
-    setSideBarToggle,
-    leftSideBarToggled,
-    setLeftSideBarToggle,
-  } = props;
+  const { sideBarToggled, setSideBarToggle, leftSideBarToggled, setLeftSideBarToggle } = props;
 
   return (
     <div className="flex bg-[#343541] text-white justify-between items-center h-[55px] border-b-8 border-[#202123] px-3">

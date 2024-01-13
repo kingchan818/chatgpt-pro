@@ -6,7 +6,8 @@
         "plugin:jsx-a11y/recommended",
         "plugin:import/errors",
         "plugin:import/warnings",
-        "react-app"
+        "react-app",
+        "prettier"
     ],
     "plugins": [
         "react",
