@@ -36,10 +36,11 @@ const SideBar = forwardRef((props, ref) => {
 
       <div className="flex flex-col justify-center mx-4 min-w-0">
         {chats?.map((val) => (
-          <button type="button" className="text-left p-2 rounded-md cust-hover cursor-pointer" key={val?.sessionId}>{val?.name}</button>
+          <button type="button" className="text-left p-2 rounded-md cust-hover cursor-pointer" key={val?.sessionId}>
+            {val?.name}
+          </button>
         ))}
       </div>
-
     </StyledDiv>
   );
 });
@@ -55,32 +56,37 @@ SideBar.propTypes = {
 };
 
 const StyledDiv = styled.div`
-    height: 100%;
-    width: ${(props) => (props.isOpen ? '250px' : '0')};
-    position: fixed;
-    z-index: 1;
-    top: 0;
-    left: 0;
-    background-color: #111;
-    overflow-x: hidden;
-    transition: 0.5s;
-    color: #fff;
+  height: 100%;
+  width: ${(props) => (props.isOpen ? '250px' : '0')};
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  background-color: #111;
+  overflow-x: hidden;
+  transition: 0.5s;
+  color: #fff;
 
-    .cust-hover:hover {
-      background: rgba(255, 255, 255, 0.1);
-    }
+  .cust-hover:hover {
+    background: rgba(255, 255, 255, 0.1);
+  }
 
+  .clicked {
+    transition:
+      background-color 0.1s ease-in-out,
+      transform 0.1s ease-in-out;
+    background-color: rgba(255, 255, 255, 0.5);
+    transform: scale(0.98);
+  }
 
-    .clicked {
-      transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out;
-      background-color: rgba(255, 255, 255, 0.5);
-      transform: scale(0.98);
-    }
-
-    h1, p, a, li, button {
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      overflow: hidden;
+  h1,
+  p,
+  a,
+  li,
+  button {
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
   }
 `;
 
