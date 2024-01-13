@@ -6,10 +6,17 @@ import PropTypes from 'prop-types';
 Nav.propTypes = {
   sideBarToggled: PropTypes.bool.isRequired,
   setSideBarToggle: PropTypes.func.isRequired,
+  setLeftSideBarToggle: PropTypes.func.isRequired,
+  leftSideBarToggled: PropTypes.bool.isRequired,
 };
 
 export default function Nav(props) {
-  const { sideBarToggled, setSideBarToggle } = props;
+  const {
+    sideBarToggled,
+    setSideBarToggle,
+    leftSideBarToggled,
+    setLeftSideBarToggle,
+  } = props;
 
   return (
     <div className="flex bg-[#343541] text-white justify-between items-center h-[55px] border-b-8 border-[#202123] px-3">
@@ -17,7 +24,9 @@ export default function Nav(props) {
         <RxHamburgerMenu onClick={() => setSideBarToggle(!sideBarToggled)} className="cursor-pointer" />
       </div>
       <div className="font-medium">ChatGPT 3.5</div>
-      <FaRegEdit className="cursor-pointer" />
+      <div className="checked:outline">
+        <RxHamburgerMenu onClick={() => setLeftSideBarToggle(!leftSideBarToggled)} className="cursor-pointer" />
+      </div>
     </div>
   );
 }
