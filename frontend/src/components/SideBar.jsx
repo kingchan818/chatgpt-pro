@@ -5,7 +5,7 @@ import PropTypes from 'prop-types';
 import { ReactComponent as ChatGPTSvg } from '../assets/chatgpt-24.svg';
 
 const SideBar = forwardRef((props, ref) => {
-  const { chats = [] } = props;
+  const { chats = [], isOpen } = props;
 
   const [isCreatedChatClicked, setIsCreateChatClicked] = useState(false);
 
@@ -17,7 +17,8 @@ const SideBar = forwardRef((props, ref) => {
   };
 
   return (
-    <StyledDiv className="bg-black text-white flex flex-col h-screen text-sm w-[250px]" ref={ref}>
+    <StyledDiv className="bg-black text-white flex flex-col h-screen text-sm" ref={ref} isOpen={isOpen}>
+      {/* TODO: Refactor the Component This would be the Content */}
       <button
         type="button"
         className={`flex items-center cursor-pointer font-medium m-4 cust-hover justify-between rounded-md p-2 ${isCreatedChatClicked ? 'clicked' : ''}`}
@@ -33,7 +34,7 @@ const SideBar = forwardRef((props, ref) => {
         <FaRegEdit />
       </button>
 
-      <div className="flex flex-col justify-center mx-4">
+      <div className="flex flex-col justify-center mx-4 min-w-0">
         {chats?.map((val) => (
           <button type="button" className="text-left p-2 rounded-md cust-hover cursor-pointer" key={val?.sessionId}>{val?.name}</button>
         ))}
@@ -50,18 +51,37 @@ SideBar.propTypes = {
       name: PropTypes.string.isRequired,
     }),
   ).isRequired,
+  isOpen: PropTypes.bool.isRequired,
 };
 
-export default SideBar;
-
 const StyledDiv = styled.div`
-  .cust-hover:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
+    height: 100%;
+    width: ${(props) => (props.isOpen ? '250px' : '0')};
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    color: #fff;
 
-  .clicked {
-    transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out;
-    background-color: rgba(255, 255, 255, 0.5);
-    transform: scale(0.98);
+    .cust-hover:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+
+    .clicked {
+      transition: background-color 0.1s ease-in-out, transform 0.1s ease-in-out;
+      background-color: rgba(255, 255, 255, 0.5);
+      transform: scale(0.98);
+    }
+
+    h1, p, a, li, button {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
   }
 `;
+
+export default SideBar;
