@@ -1,7 +1,7 @@
-import React, { useState, forwardRef } from 'react';
+import PropTypes from 'prop-types';
+import React, { forwardRef, useState } from 'react';
 import { FaRegEdit } from 'react-icons/fa';
 import styled from 'styled-components';
-import PropTypes from 'prop-types';
 import { ReactComponent as ChatGPTSvg } from '../assets/chatgpt-24.svg';
 
 const SideBar = forwardRef((props, ref) => {
