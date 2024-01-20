@@ -21,6 +21,9 @@ export class Transaction extends Document {
   @Prop({ required: true, index: true })
   apiTokenRef: string; // the api key created on our side
 
+  @Prop({ required: true })
+  llmType: string;
+
   @Prop({ default: Date.now, required: true })
   createdDT: string;
 }
