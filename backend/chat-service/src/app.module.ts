@@ -1,18 +1,18 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_FILTER, APP_INTERCEPTOR, APP_PIPE } from '@nestjs/core';
+import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './auth/auth.module';
+import { ChatModule } from './chat/chat.module';
 import configuration from './config/configuration';
+import { MongoExceptionFilter } from './filters/mongo-exception.filter';
 import { CustomLoggerModule } from './logger/logger.module';
 import { CustomLoggerService } from './logger/logger.service';
-import { AuthModule } from './auth/auth.module';
-import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 import { RequestInterceptor } from './request/request.interceptor';
-import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from './user/user.module';
-import { MongoExceptionFilter } from './filters/mongo-exception.filter';
 import { TransactionModule } from './transaction/transaction.module';
-import { ChatModule } from './chat/chat.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
@@ -29,18 +29,6 @@ import { ChatModule } from './chat/chat.module';
           uri: uris,
           dbName: database,
           replicaSet,
-          connectionFactory: (connection) => {
-            connection.on('connected', () => {
-              logger.log('Mongodb connected');
-            });
-            connection.on('error', (err) => {
-              logger.log('Mongodb error', err);
-            });
-            connection.on('disconnected', () => {
-              logger.log('Mongodb disconnected');
-            });
-            return connection;
-          },
           ...mongoOptions,
         };
       },
@@ -57,6 +45,10 @@ import { ChatModule } from './chat/chat.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: RequestInterceptor,
+    },
+    {
+      provide: APP_PIPE,
+      useFactory: () => new ValidationPipe(),
     },
     {
       provide: APP_FILTER,

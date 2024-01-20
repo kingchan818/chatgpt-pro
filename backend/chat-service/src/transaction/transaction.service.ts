@@ -3,11 +3,11 @@ import { Model } from 'mongoose';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
+import { get, set } from 'lodash';
 import { CustomLoggerService } from '../logger/logger.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { Transaction } from './schema/transaction.schema';
-import { get, set } from 'lodash';
 
 @Injectable()
 export class TransactionService {
