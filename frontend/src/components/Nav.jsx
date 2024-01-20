@@ -1,11 +1,12 @@
 import PropTypes from 'prop-types';
 import React, { useState } from 'react';
-import { GrActions } from 'react-icons/gr';
 import { LuPanelLeftOpen, LuPanelRightOpen } from 'react-icons/lu';
 import { RiArrowDropDownLine } from 'react-icons/ri';
-import { RxLightningBolt } from 'react-icons/rx';
 import styled from 'styled-components';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentModel } from '../redux/reducers/modelConfigurator.reducer';
 import InputBox from './InputBox';
+import { createIcon } from '../utils';
 
 Nav.propTypes = {
   setLeftSideBarToggle: PropTypes.func.isRequired,
@@ -28,37 +29,12 @@ function MenuIcon({ sideBarToggled, setFn }) {
     </div>
   );
 }
-const models = [
-  {
-    id: 1,
-    name: '3 Turbo',
-    icon: RxLightningBolt,
-    description: 'The most fastest chatbot in the world',
-    size: 20,
-  },
-  {
-    id: 2,
-    name: '4 Turbo',
-    icon: GrActions,
-    description: 'The most fastest chatbot in the world',
-    size: 25,
-  },
-];
 
 export default function Nav(props) {
   const { leftSideBarToggled, setLeftSideBarToggle } = props;
-
   const [toggleDropDownList, setToggleDropDownList] = useState(false);
-  // TODO: Need a refactor to use context provider to manage the state
-  const [currentModel, setCurrentModel] = useState({
-    id: 1,
-    name: '3 Turbo',
-    icon: RxLightningBolt,
-    description: 'The most fastest chatbot in the world',
-    size: 20,
-  });
-
-  // TODO: the model should predefined in some where
+  const { currentModel, models } = useSelector((state) => state.modelConfigurator);
+  const dispatch = useDispatch();
 
   return (
     <div className="flex bg-[#343541] text-white justify-between items-center h-[80px] px-3">
@@ -75,22 +51,22 @@ export default function Nav(props) {
         {toggleDropDownList && (
           <div className="content mt-2 min-w-[340px] max-w-xs overflow-hidden rounded-lg border border-gray-100 bg-token-surface-primary shadow-lg dark:border-gray-700 bg-[#202123]">
             {models.map((model) => {
-              const IconRef = model.icon;
+              const ReactIcon = createIcon(model.icon);
               return (
                 <button
                   className="flex p-3 justify-between items-center"
                   type="button"
                   key={model.id}
-                  onClick={() => setCurrentModel(model)}
+                  onClick={() => dispatch(setCurrentModel(model))}
                 >
-                  <IconRef size={model.size} />
+                  <ReactIcon size={model.size} />
                   <div className="mx-3 text-start">
                     <div className="text-base">
                       ChatGPT <span className="text-white/70">{model.name}</span>
                     </div>
                     <div className="text-sm text-gray-400">{model.description}</div>
                   </div>
-                  <InputBox isActive={currentModel.id === model.id} onClick={() => setCurrentModel(model)} />
+                  <InputBox isActive={currentModel.id === model.id} onClick={() => dispatch(setCurrentModel(model))} />
                 </button>
               );
             })}
