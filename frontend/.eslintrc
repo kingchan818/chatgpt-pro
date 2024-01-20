@@ -32,6 +32,9 @@
         ],
         "react/display-name": [
             "off"
+        ],
+        "import/prefer-default-export": [
+            "off"
         ]
     }
 }
