@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Req, Sse } from '@nestjs/common';
+import { Body, Controller, HttpException, Param, Post, Req, Sse, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get } from 'lodash';
 
@@ -7,7 +7,10 @@ import { TransactionService } from '../transaction/transaction.service';
 import { generateUniqueKey } from '../utils';
 import { ChatService } from './chat.service';
 import { ChatDto } from './dto/chat.dto';
+import { HttpStatusCode } from 'axios';
+import { ChatGuard } from './chat.guard';
 
+@UseGuards(ChatGuard)
 @Controller('chat')
 export class ChatController {
   constructor(
@@ -50,7 +53,9 @@ export class ChatController {
       apiTokenRef: currentUser.userApiKey,
     });
 
-    console.log(foundTransaction);
+    if (!foundTransaction) {
+      throw new HttpException('Message not found', HttpStatusCode.NotFound);
+    }
 
     let subscriptions;
 
