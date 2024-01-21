@@ -3,6 +3,8 @@ name: 'chatgpt-chat-service'
 http:
   host: 'localhost'
   port: 8181
+  cors:
+    origin: '*' # or 'http://localhost:3000'
 
 aes-key: 'chatgpt-chat-service'
 
