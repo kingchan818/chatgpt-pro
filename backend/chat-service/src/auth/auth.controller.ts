@@ -1,15 +1,12 @@
 import { Body, Controller, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
-import { ConfigService } from '@nestjs/config';
-import { encrypt } from '../utils';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private authService: AuthService,
     private userService: UserService,
-    private configService: ConfigService,
   ) {}
 
   // This action is if user provide OpenAI API key
@@ -18,15 +15,15 @@ export class AuthController {
     const { openAIAPIKey } = body;
     const isValidApiKey = await this.authService.validateOpenAIAPIKey(req.requestId, openAIAPIKey);
     if (isValidApiKey) {
-      const hasedToken = encrypt(openAIAPIKey, this.configService.get('aes-key'));
+      // TODO: find a way to encrypt the openAIAPIKey before saving to DB and I want it to be decryptable and unique
+      // const hashedToken = encrypt(openAIAPIKey, this.configService.get('aes-key'));
       const user = await this.userService.create(req.requestId, {
-        openAIToken: hasedToken,
+        openAIToken: openAIAPIKey,
       });
       const apiKey = user.apiKeys[0];
       return { apiKey: apiKey };
     }
-
-    throw new HttpException('Unknow Error', HttpStatus.BAD_REQUEST);
+    return {};
   }
 
   @Post('gen-new-key')
@@ -38,9 +35,9 @@ export class AuthController {
       if (foundUser) {
         return { apiKey: foundUser.apiKeys[foundUser.apiKeys.length - 1] };
       } else {
-        throw new HttpException('Unknow Error', HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new HttpException('UnKnown Error', HttpStatus.INTERNAL_SERVER_ERROR);
       }
     }
-    throw new HttpException('Unknow Error', HttpStatus.INTERNAL_SERVER_ERROR);
+    throw new HttpException('UnKnown Error', HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }

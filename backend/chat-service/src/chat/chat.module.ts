@@ -6,11 +6,12 @@ import { ConfigModule } from '@nestjs/config';
 import configuration from 'src/config/configuration';
 import { UserModule } from 'src/user/user.module';
 import { TransactionModule } from 'src/transaction/transaction.module';
+import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   imports: [ConfigModule.forRoot({ load: [configuration] }), UserModule, TransactionModule],
   controllers: [ChatController],
-  providers: [ChatService, ChatgptService],
+  providers: [AuthService, ChatService, ChatgptService],
   exports: [ChatService],
 })
 export class ChatModule {}

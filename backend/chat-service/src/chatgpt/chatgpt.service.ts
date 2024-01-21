@@ -1,34 +1,61 @@
-import { Injectable, Scope } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, OnModuleInit, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { isEmpty } from 'lodash';
+import { get, isEmpty } from 'lodash';
 import { Observable, map } from 'rxjs';
 import { CustomLoggerService } from 'src/logger/logger.service';
+import axios from 'axios';
 export const importDynamic = new Function('modulePath', 'return import(modulePath)');
 
 @Injectable({ scope: Scope.TRANSIENT })
-export class ChatgptService {
+export class ChatgptService implements OnModuleInit {
   chatGPTAPI: any;
+  importChatGptInstance: any;
   constructor(
     private readonly configureService: ConfigService,
     private readonly logger: CustomLoggerService,
   ) {}
 
-  async init(openAIAPIKey: string, chatgptOptions?: any) {
+  async onModuleInit() {
     const { ChatGPTAPI } = await importDynamic('chatgpt');
+    this.importChatGptInstance = ChatGPTAPI;
+  }
+
+  async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
+    this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
+    try {
+      await axios({
+        method: 'get',
+        url: 'https://api.openai.com/v1/models',
+        headers: {
+          Authorization: `Bearer ${openAIAPIKey}`,
+        },
+      });
+      return true;
+    } catch (ex) {
+      this.logger.error(`[${requestId}] -- Invalid API key`);
+
+      throw new HttpException(
+        get(ex, 'response.data.error.message', 'Invalid API key'),
+        HttpStatus.UNAUTHORIZED,
+      );
+    }
+  }
+
+  async init(openAIAPIKey: string, chatgptOptions?: any) {
     const defaultConfig = this.configureService.get('chatgpt');
     isEmpty(chatgptOptions) && this.logger.log('No chatgpt options provided, using default config');
     !isEmpty(chatgptOptions) && this.logger.log('Using provided chatgpt options');
-
-    this.chatGPTAPI = new ChatGPTAPI({
+    this.chatGPTAPI = new this.importChatGptInstance({
       apiKey: openAIAPIKey,
       ...defaultConfig,
       ...chatgptOptions,
+      debug: true,
     });
     return this.chatGPTAPI;
   }
 
   async startChatWithInit(requestId: string, currentUser: any, transaction: any) {
-    await this.init(currentUser.openAITKey, transaction.chatOptions);
+    await this.init(currentUser.openAIKey, transaction.chatOptions);
     return this.startChat({
       requestId,
       message: transaction.message,
