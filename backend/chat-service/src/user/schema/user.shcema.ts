@@ -9,10 +9,10 @@ export class User extends Document {
   @Prop({ type: [String], index: true, default: [], unique: true, max: 20 })
   apiKeys: string[];
 
-  @Prop({ default: Date.now, required: true })
+  @Prop({ default: () => new Date().toISOString(), required: true })
   updatedDT: string;
 
-  @Prop({ default: Date.now, required: true })
+  @Prop({ default: () => new Date().toISOString(), required: true })
   createdDT: string;
 }
 
