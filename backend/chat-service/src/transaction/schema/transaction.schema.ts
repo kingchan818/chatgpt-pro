@@ -24,7 +24,7 @@ export class Transaction extends Document {
   @Prop({ required: true })
   llmType: string;
 
-  @Prop({ default: Date.now, required: true })
+  @Prop({ default: () => new Date().toISOString(), required: true })
   createdDT: string;
 }
 
