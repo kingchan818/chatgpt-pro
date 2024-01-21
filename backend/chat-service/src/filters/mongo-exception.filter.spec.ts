@@ -1,52 +1,77 @@
+import { Test } from '@nestjs/testing';
 import { MongoExceptionFilter } from './mongo-exception.filter';
 import { MongoError } from 'mongodb';
 import { ArgumentsHost } from '@nestjs/common';
-import { Test, TestingModule } from '@nestjs/testing';
-import { createMock } from '@golevelup/ts-jest';
-import { Request, Response } from 'express';
 
 describe('MongoExceptionFilter', () => {
   let filter: MongoExceptionFilter;
 
   beforeEach(async () => {
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       providers: [MongoExceptionFilter],
     }).compile();
 
-    filter = module.get<MongoExceptionFilter>(MongoExceptionFilter);
+    filter = moduleRef.get<MongoExceptionFilter>(MongoExceptionFilter);
   });
 
-  it('should be defined', () => {
-    expect(filter).toBeDefined();
-  });
+  it('should handle duplicate key error', () => {
+    const exception = new MongoError('Exception');
+    exception.code = 11000;
 
-  describe('catch', () => {
-    it('should catch exceptions', () => {
-      const error = new MongoError('error');
-      const argumentsHost = createMock<ArgumentsHost>();
-      const request = createMock<Request>();
-      const response = createMock<Response>();
+    const request = {
+      url: '/test',
+    };
 
-      request.url = '/test/url';
+    const response = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
 
-      argumentsHost.switchToHttp = jest.fn().mockReturnValue({
+    const host = {
+      switchToHttp: () => ({
         getResponse: () => response,
         getRequest: () => request,
-      });
+      }),
+    };
 
-      response.status = jest.fn().mockReturnThis();
-      response.json = jest.fn().mockReturnThis();
+    filter.catch(exception, host as unknown as ArgumentsHost);
 
-      filter.catch(error, argumentsHost);
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({
+      mongodbErrorCode: 11000,
+      path: '/test',
+      timestamp: expect.any(String),
+      message: 'Duplicate key error',
+    });
+  });
 
-      expect(argumentsHost.switchToHttp).toBeCalled();
-      expect(response.status).toBeCalledWith(500);
-      expect(response.json).toBeCalledWith({
-        mongodbErrorCode: error.code,
-        timestamp: expect.any(String),
-        path: expect.any(String),
-        message: expect.any(String),
-      });
+  it('should handle other mongodb errors', () => {
+    const exception = new MongoError('Exception');
+    exception.code = 12345; // some different error code
+
+    const request = {
+      url: '/test',
+    };
+
+    const response = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+
+    const host = {
+      switchToHttp: () => ({
+        getResponse: () => response,
+        getRequest: () => request,
+      }),
+    };
+
+    filter.catch(exception, host as unknown as ArgumentsHost);
+
+    expect(response.status).toHaveBeenCalledWith(500);
+    expect(response.json).toHaveBeenCalledWith({
+      mongodbErrorCode: 12345,
+      path: '/test',
+      timestamp: expect.any(String),
     });
   });
 });

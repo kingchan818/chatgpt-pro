@@ -21,12 +21,8 @@ export class AuthService {
   }
 
   async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
-    try {
-      this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
-      await this.chatgptService.init(openAIAPIKey);
-      return true;
-    } catch (e) {
-      throw new HttpException(e.message || 'Invalid API key', 500);
-    }
+    this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
+    await this.chatgptService.validateOpenAIAPIKey(requestId, openAIAPIKey);
+    return true;
   }
 }

@@ -3,8 +3,6 @@ import { Observable, tap } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 import { CustomLoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
-import { ConfigService } from '@nestjs/config';
-import { decrypt } from '../utils/crypto';
 import { get } from 'lodash';
 
 @Injectable()
@@ -12,7 +10,6 @@ export class RequestInterceptor implements NestInterceptor {
   constructor(
     private logger: CustomLoggerService,
     private authService: AuthService,
-    private configService: ConfigService,
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -26,9 +23,9 @@ export class RequestInterceptor implements NestInterceptor {
 
     if (headers['x-auth-key']) {
       const userApiKey = headers['x-auth-key'].toString();
-      const currentUser = await this.authService.validateAndReturnUser(request.requestId, userApiKey);
-      const openAITKey = decrypt(get(currentUser, 'openAIToken'), this.configService.get<string>('aes-key'));
-      request.currentUser = { openAITKey, userApiKey };
+      const currentUser = await this.authService.validateAndReturnUser('REQUEST-INTERCEPTOR', userApiKey);
+      const openAIKey = get(currentUser, 'openAIToken');
+      request.currentUser = { openAIKey, userApiKey };
     }
 
     if (request.url.includes('sse')) {
