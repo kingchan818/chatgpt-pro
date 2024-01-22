@@ -40,6 +40,10 @@ export class RequestInterceptor implements NestInterceptor {
       RequestInterceptor.name,
     );
 
+    // set the X-Request-ID header for microservice communication
+    const response = context.switchToHttp().getResponse();
+    response.header('X-Request-ID', request.requestId);
+
     return next
       .handle()
       .pipe(
