@@ -17,9 +17,15 @@ export class RequestInterceptor implements NestInterceptor {
     const handlerName = context.getHandler().name;
     const request = context.switchToHttp().getRequest();
     const headers = request.headers;
-    request.requestId = uuidv4(); // Generate a unique ID and add it to the request object
+
     request.now = new Date().toISOString(); // Add a timestamp to the request object
     request.userAgent = headers['user-agent']; // Add the user agent to the request object
+
+    if (headers['x-request-id']) {
+      request.requestId = headers['x-request-id'].toString();
+    } else {
+      request.requestId = uuidv4();
+    }
 
     if (headers['x-auth-key']) {
       const userApiKey = headers['x-auth-key'].toString();
@@ -39,6 +45,10 @@ export class RequestInterceptor implements NestInterceptor {
       } params: ${JSON.stringify(request.params)} body: ${JSON.stringify(request.body)}`,
       RequestInterceptor.name,
     );
+
+    // set the X-Request-ID header for microservice communication
+    const response = context.switchToHttp().getResponse();
+    response.header('x-request-id', request.requestId);
 
     return next
       .handle()
