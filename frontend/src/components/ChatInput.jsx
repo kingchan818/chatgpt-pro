@@ -25,7 +25,7 @@ function ChatInput() {
       <textarea ref={textareaRef} value={message} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
       {/* keep button on the button */}
       <div
-        className={`absolute bottom-[6px] right-5 py-2 px-2 rounded-md ${
+        className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
           !isEmpty(message) ? 'bg-white cursor-pointer' : 'input-button-opacity'
         }  `}
       >
