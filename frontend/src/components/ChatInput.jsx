@@ -21,18 +21,20 @@ function ChatInput() {
   };
 
   return (
-    <InputStyle className="mx-4">
-      <textarea ref={textareaRef} value={message} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
-      {/* keep button on the button */}
-      <div
-        className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
-          !isEmpty(message) ? 'bg-white cursor-pointer' : 'input-button-opacity'
-        }  `}
-      >
-        {/* arrow up icon */}
-        <FaArrowUp color="black" />
-      </div>
-    </InputStyle>
+    <div className="flex items-center justify-center mx-4">
+      <InputStyle className="sm:w-[45rem] md:w-[50rem] xl:w-[80rem]">
+        <textarea ref={textareaRef} value={message} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
+        {/* keep button on the button */}
+        <div
+          className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
+            !isEmpty(message) ? 'bg-white cursor-pointer' : 'input-button-opacity'
+          }  `}
+        >
+          {/* arrow up icon */}
+          <FaArrowUp color="black" />
+        </div>
+      </InputStyle>
+    </div>
   );
 }
 
