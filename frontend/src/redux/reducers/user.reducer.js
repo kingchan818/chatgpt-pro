@@ -11,7 +11,6 @@ export const register = createAsyncThunk('users/fetchByIdStatus', async (openAIA
     localStorage.setItem('apiKey', response.data.apiKey);
     return response.data;
   } catch (e) {
-    console.log(e);
     return thunkAPI.rejectWithValue(e.response.data);
   }
 });
@@ -32,14 +31,11 @@ const userSlice = createSlice({
         ...state,
         loading: true,
       }))
-      .addCase(register.fulfilled, (state, action) => {
-        console.log(action);
-        return {
-          ...state,
-          loading: false,
-          currentUser: action.payload,
-        };
-      })
+      .addCase(register.fulfilled, (state, action) => ({
+        ...state,
+        loading: false,
+        currentUser: action.payload,
+      }))
       .addCase(register.rejected, (state, action) => ({ ...state, loading: false, error: action.payload }));
   },
 });
