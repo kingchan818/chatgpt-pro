@@ -66,4 +66,35 @@ export class TransactionService {
 
     return this.update(messageId, { tokenUsage });
   }
+
+  find(requestId: string, documentFields: Record<string, any>) {
+    this.logger.log(`[${requestId}] -- Find chat transaction by document fields`);
+    this.logger.verbose(
+      `[${requestId}] -- Find chat transaction by document fields ${JSON.stringify(documentFields)}`,
+    );
+    return this.transactionModel.find(documentFields).exec();
+  }
+
+  async constructAllCollectionIdsByCurrentUser(requestId: string, currentUser: any) {
+    this.logger.log(`[${requestId}] -- Construct all collection ids by current user`);
+    this.logger.verbose(`[${requestId}] -- Construct all collection ids by current user ${currentUser}`);
+
+    const pipeLine = [
+      { $match: { apiTokenRef: currentUser.userApiKey } },
+      // group by collectionId
+      { $group: { _id: '$collectionId' } },
+      { $unwind: '$_id' },
+    ];
+    const records = await this.transactionModel.aggregate(pipeLine).exec();
+
+    return records.map((record) => record._id);
+  }
+
+  delete(requestId: string, documentFields: Record<string, any>) {
+    this.logger.log(`[${requestId}] -- Delete chat transaction by document fields`);
+    this.logger.verbose(
+      `[${requestId}] -- Delete chat transaction by document fields ${JSON.stringify(documentFields)}`,
+    );
+    return this.transactionModel.deleteOne(documentFields).exec();
+  }
 }

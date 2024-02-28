@@ -21,6 +21,9 @@ export class Transaction extends Document {
   @Prop({ required: true, index: true })
   apiTokenRef: string; // the api key created on our side
 
+  @Prop({ required: true, index: true }) // the collection id from the user's chat side
+  collectionId: string;
+
   @Prop({ required: true })
   llmType: string;
 

@@ -1,6 +1,9 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MdKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
+import { useSelector } from 'react-redux';
+import toast, { Toaster } from 'react-hot-toast';
+import { isEmpty, get } from 'lodash';
 import SideBar from '../components/SideBar';
 import Nav from '../components/Nav';
 import ChatSection from '../components/ChatSection';
@@ -26,55 +29,17 @@ export default function Home() {
     { sessionId: 10, name: 'Investment Opportunities' },
   ];
 
-  const msgs = [
-    {
-      role: 'bot',
-      id: 1,
-      content: 'Hello, how can I help you today?',
-    },
-    {
-      role: 'User',
-      id: 2,
-      content: 'I want to know more about the product',
-    },
-    {
-      role: 'bot',
-      id: 3,
-      content: 'Sure, what do you want to know?',
-    },
-    {
-      role: 'User',
-      id: 4,
-      content: 'What is the price of ETH today?',
-    },
-    {
-      role: 'bot',
-      id: 5,
-      content:
-        'Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!Lorem ipsum dolor sit amet consectetur, adipisicing elit. Laborum itaque esse facere reprehenderit minus? Recusandae eligendi aut rerum repellat sunt dolorum obcaecati delectus alias labore dolor, maiores dignissimos vitae sit!',
-    },
-    {
-      role: 'bot',
-      id: 5,
-      content:
-        "Sure! Here's a simple JavaScript functional for loop implementation:\n\n```javascript\nfunction forLoop(start, condition, increment, callback) {\n  if (condition(start)) {\n    callback(start);\n    const nextValue = increment(start);\n    forLoop(nextValue, condition, increment, callback);\n  }\n}\n\n// Usage example:\nforLoop(\n  0,\n  (i) => i < 5, // condition\n  (i) => i + 1, // increment\n  (i) => console.log(i) // callback\n);\n```\n\nIn this implementation, the `forLoop` function takes four parameters:\n\n- `start`: The initial value of the loop variable.\n- `condition`: A function that checks whether the loop should continue based on the current value of the loop variable.\n- `increment`: A function that calculates the next value of the loop variable.\n- `callback`: A function that is called for each iteration of the loop.\n\nThe `forLoop` function recursively calls itself with the updated value of the loop variable until the condition is no longer satisfied. Each iteration, it executes the provided callback function passing the current value of the loop variable as an argument.\n\nIn the usage example, it will print numbers from 0 to 4 to the console.",
-    },
-    {
-      role: 'bot',
-      id: 5,
-      content:
-        "Sure! Here's a simple JavaScript functional for loop implementation:\n\n```javascript\nfunction forLoop(start, condition, increment, callback) {\n  if (condition(start)) {\n    callback(start);\n    const nextValue = increment(start);\n    forLoop(nextValue, condition, increment, callback);\n  }\n}\n\n// Usage example:\nforLoop(\n  0,\n  (i) => i < 5, // condition\n  (i) => i + 1, // increment\n  (i) => console.log(i) // callback\n);\n```\n\nIn this implementation, the `forLoop` function takes four parameters:\n\n- `start`: The initial value of the loop variable.\n- `condition`: A function that checks whether the loop should continue based on the current value of the loop variable.\n- `increment`: A function that calculates the next value of the loop variable.\n- `callback`: A function that is called for each iteration of the loop.\n\nThe `forLoop` function recursively calls itself with the updated value of the loop variable until the condition is no longer satisfied. Each iteration, it executes the provided callback function passing the current value of the loop variable as an argument.\n\nIn the usage example, it will print numbers from 0 to 4 to the console.",
-    },
-    {
-      role: 'bot',
-      id: 5,
-      content:
-        "Sure! Here's a simple JavaScript functional for loop implementation:\n\n```javascript\nfunction forLoop(start, condition, increment, callback) {\n  if (condition(start)) {\n    callback(start);\n    const nextValue = increment(start);\n    forLoop(nextValue, condition, increment, callback);\n  }\n}\n\n// Usage example:\nforLoop(\n  0,\n  (i) => i < 5, // condition\n  (i) => i + 1, // increment\n  (i) => console.log(i) // callback\n);\n```\n\nIn this implementation, the `forLoop` function takes four parameters:\n\n- `start`: The initial value of the loop variable.\n- `condition`: A function that checks whether the loop should continue based on the current value of the loop variable.\n- `increment`: A function that calculates the next value of the loop variable.\n- `callback`: A function that is called for each iteration of the loop.\n\nThe `forLoop` function recursively calls itself with the updated value of the loop variable until the condition is no longer satisfied. Each iteration, it executes the provided callback function passing the current value of the loop variable as an argument.\n\nIn the usage example, it will print numbers from 0 to 4 to the console.",
-    },
-  ];
+  const { messages, error, isProcessing, streamMessage } = useSelector((state) => state.chat);
+  useEffect(() => {
+    if (!isEmpty(error)) {
+      const errorMessage = get(error, 'message', 'Oh its a empty message...');
+      toast.error(errorMessage);
+    }
+  }, [error]);
 
   return (
     <div>
+      <Toaster />
       <SideBar chats={chats} ref={sideBarRef} isOpen={rightSideBarToggled} />
       <MainContent isOpen={rightSideBarToggled}>
         {/* Your main content goes here */}
@@ -84,9 +49,8 @@ export default function Home() {
         </ToggleLeftSideBarBtn>
 
         <StyledHome>
-          {/* TODO: refactor it */}
           <Nav leftSideBarToggled={leftSideBarToggled} setLeftSideBarToggle={setLeftSideBarToggle} />
-          <ChatSection messages={msgs} />
+          <ChatSection messages={messages} isProcessing={isProcessing} streamMessage={streamMessage} />
           <ChatInput />
         </StyledHome>
       </MainContent>

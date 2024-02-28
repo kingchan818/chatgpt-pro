@@ -9,11 +9,11 @@ http:
 aes-key: 'chatgpt-chat-service'
 
 mongodb:
-  uris: 'mongodb://localhost:27017'
+  uris: 'mongodb://mongo:27017'
   database: 'chatgpt-pro'
   options:
     noDelay: true
-    retryAttempts: 1
+    retryAttempts: 5
     directConnection: true
 
 chatgpt:
@@ -22,5 +22,5 @@ chatgpt:
   systemMessageDelay: 1000
   timeoutMs: 160000
   completionParams:
-    model: 'gpt-3.5-turbo'
+    model: 'gpt-3.5-turbo-0613'
     temperature: 0.9

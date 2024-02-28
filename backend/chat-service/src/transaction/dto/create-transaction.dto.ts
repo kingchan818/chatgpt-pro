@@ -8,4 +8,5 @@ export class CreateTransactionDto {
   chatOptions?: Record<string, any>;
   llmType: supportModelType;
   tokenUsage: Record<string, any>;
+  collectionId: string;
 }

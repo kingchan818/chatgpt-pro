@@ -48,9 +48,10 @@ export class ChatgptService implements OnModuleInit {
     this.chatGPTAPI = new this.importChatGptInstance({
       apiKey: openAIAPIKey,
       ...defaultConfig,
-      ...chatgptOptions,
+      completionParams: { ...chatgptOptions },
       debug: true,
     });
+
     return this.chatGPTAPI;
   }
 
