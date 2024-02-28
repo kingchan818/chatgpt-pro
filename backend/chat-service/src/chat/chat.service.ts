@@ -46,6 +46,7 @@ export class ChatService {
         content: userMessage,
       });
     }
+    console.log('model', model);
 
     const usage = new GPTTokens({ model, messages });
     return usage;

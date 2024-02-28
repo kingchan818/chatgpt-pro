@@ -15,6 +15,18 @@ export const register = createAsyncThunk('users/fetchByIdStatus', async (openAIA
   }
 });
 
+export const validateInviteToken = createAsyncThunk('users/validateInviteToken', async (inviteToken, thunkAPI) => {
+  try {
+    // TODO: handle invite token should create a api function that validate the invite token
+
+    const response = setTimeout(() => true, 1000);
+    localStorage.setItem('apiKey', inviteToken);
+    return response;
+  } catch (e) {
+    return thunkAPI.rejectWithValue(e.response.data);
+  }
+});
+
 const userSlice = createSlice({
   name: 'user',
   initialState: {
@@ -36,7 +48,17 @@ const userSlice = createSlice({
         loading: false,
         currentUser: action.payload,
       }))
-      .addCase(register.rejected, (state, action) => ({ ...state, loading: false, error: action.payload }));
+      .addCase(register.rejected, (state, action) => ({ ...state, loading: false, error: action.payload }))
+      .addCase(validateInviteToken.pending, (state) => ({
+        ...state,
+        loading: true,
+      }))
+      .addCase(validateInviteToken.fulfilled, (state, action) => ({
+        ...state,
+        loading: false,
+        currentUser: action.payload,
+      }))
+      .addCase(validateInviteToken.rejected, (state, action) => ({ ...state, loading: false, error: action.payload }));
   },
 });
 

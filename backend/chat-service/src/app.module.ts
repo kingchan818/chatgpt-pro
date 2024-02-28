@@ -13,6 +13,7 @@ import { CustomLoggerService } from './logger/logger.service';
 import { RequestInterceptor } from './request/request.interceptor';
 import { TransactionModule } from './transaction/transaction.module';
 import { UserModule } from './user/user.module';
+import { ChatgptModule } from './chatgpt/chatgpt.module';
 
 @Module({
   imports: [
@@ -37,8 +38,9 @@ import { UserModule } from './user/user.module';
     CustomLoggerModule,
     AuthModule,
     UserModule,
-    TransactionModule,
     ChatModule,
+    TransactionModule,
+    ChatgptModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
-import chatgptModels from './models';
+import CHATGPT_MODELS from './models';
+import MAPPING_CONFIGS from './mappings';
 
-export { chatgptModels };
+export { CHATGPT_MODELS, MAPPING_CONFIGS };

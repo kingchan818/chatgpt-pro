@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { register } from '../redux/reducers/user.reducer';
+import { register, validateInviteToken } from '../redux/reducers/user.reducer';
 import Loading from './Loading';
 import TextInput from './TextInput';
 
@@ -9,6 +9,14 @@ function LoginCard() {
   const [inviteToken, setInviteToken] = useState('');
   const dispatch = useDispatch();
   const { loading } = useSelector((state) => state.user);
+
+  const handleRegister = () => {
+    if (openAIKey) {
+      dispatch(register(openAIKey));
+    } else if (inviteToken) {
+      dispatch(validateInviteToken(inviteToken));
+    }
+  };
 
   return (
     <div className="flex bg-black text-white p-5 border-[1.5px] border-white/25 w-[300px] rounded-md flex-col justify-center">
@@ -28,7 +36,7 @@ function LoginCard() {
 
       <button
         type="button"
-        onClick={() => dispatch(register(openAIKey))}
+        onClick={() => handleRegister()}
         className="bg-white hover:bg-white/95 p-1 rounded-md flex justify-center items-center text-black cursor-pointer mt-4 font-medium py-2"
       >
         {loading ? <Loading /> : <span>Create account</span>}

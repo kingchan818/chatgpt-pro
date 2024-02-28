@@ -19,6 +19,38 @@
         "**/CVS": true,
         "**/.DS_Store": true,
         "**/Thumbs.db": true,
-        "**/node_modules": true
+        "**/node_modules": false
     },
+    "restoreTerminals.terminals": [
+        {
+            "splitTerminals": [
+                {
+                    "name": "chat-service-server",
+                    "commands": [
+                        "docker logs -f chat-service"
+                    ]
+                }
+            ]
+        },
+        {
+            "splitTerminals": [
+                {
+                    "name": "client",
+                    "commands": [
+                        "docker logs -f chatgpt"
+                    ]
+                }
+            ]
+        },
+        {
+            "splitTerminals": [
+                {
+                    "name": "ocr-service-server",
+                    "commands": [
+                        "docker logs -f ocr-service"
+                    ]
+                }
+            ]
+        }
+    ]
 }

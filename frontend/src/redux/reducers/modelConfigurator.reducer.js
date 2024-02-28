@@ -1,11 +1,11 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { chatgptModels } from '../../domain';
+import { CHATGPT_MODELS } from '../../domain';
 
 const modelConfiguratorSlice = createSlice({
   name: 'modelConfigurator',
   initialState: {
-    currentModel: chatgptModels[0],
-    models: chatgptModels,
+    currentModel: CHATGPT_MODELS[0],
+    models: CHATGPT_MODELS,
   },
   reducers: {
     setCurrentModel: (state, action) => ({ ...state, currentModel: action.payload }),
