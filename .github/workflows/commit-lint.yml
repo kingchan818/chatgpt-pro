@@ -23,6 +23,7 @@ jobs:
           npm --version
           npx commitlint --version
 
+
       - name: Cache node modules
         id: cache-npm
         uses: actions/cache@v3
@@ -42,8 +43,7 @@ jobs:
 
       - name: Install commitlint
         run: |
-          npm install conventional-changelog-conventionalcommits
-          npm install commitlint@latest
+          npm i
 
       - name: Validate current commit (last commit) with commitlint
         if: github.event_name == 'push'
