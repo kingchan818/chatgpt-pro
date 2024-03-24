@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { HttpStatusCode } from 'axios';
 import { GPTTokens, supportModelType } from 'gpt-tokens';
-import { isEmpty, set } from 'lodash';
-import { Observable, Subscribable } from 'rxjs';
+import { isEmpty } from 'lodash';
+import { Observable } from 'rxjs';
 import { CustomLoggerService } from 'src/logger/logger.service';
+import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto';
 import { TransactionService } from 'src/transaction/transaction.service';
 
 @Injectable()
@@ -16,65 +18,62 @@ export class ChatService {
 
   calculateToken(
     requestId: string,
-    params: { model?: supportModelType; systemMessage?: string; userMessage?: string },
+    params: {
+      model?: supportModelType;
+      systemMessage?: string;
+      userMessage?: string;
+      assistantMessage?: string;
+    },
   ) {
     this.logger.log(`[${requestId}] -- Calculate chatgpt token`);
 
-    if (isEmpty(params.systemMessage)) {
-      const defaultChatGPTSystemMessage = this.configService.get<string>('chatgpt.systemMessage');
-      set(params, 'systemMessage', defaultChatGPTSystemMessage);
-    }
+    const {
+      model = this.configService.get<string>('chatgpt.completionParams.model') as supportModelType,
+      systemMessage = this.configService.get<string>('chatgpt.systemMessage'),
+      userMessage,
+      assistantMessage,
+    } = params;
 
-    if (isEmpty(params.model)) {
-      const defaultChatGPTModel = this.configService.get<string>('chatgpt.completionParams.model');
-      set(params, 'model', defaultChatGPTModel);
-    }
-
-    const { model, systemMessage, userMessage } = params;
-    const messages = [];
-
-    if (!isEmpty(systemMessage)) {
-      messages.push({
-        role: 'system',
-        content: systemMessage,
-      });
-    }
-
-    if (!isEmpty(userMessage)) {
-      messages.push({
-        role: 'user',
-        content: userMessage,
-      });
-    }
-    console.log('model', model);
+    const messages: any = [
+      { role: 'system', content: systemMessage },
+      { role: 'user', content: userMessage },
+      { role: 'assistant', content: assistantMessage },
+    ].filter((message) => !isEmpty(message.content));
 
     const usage = new GPTTokens({ model, messages });
     return usage;
   }
 
-  handleChatSubscription(params: {
-    subscriptions: Observable<any> | Subscribable<any>;
-    req: any;
-    requestId: string;
-    messageId: string;
-  }) {
-    const { subscriptions, req, requestId, messageId } = params;
-    let tmpResult = null;
+  handleSEESubscription(req: any, chatCompletion$: Observable<any>) {
+    const { requestId, currentUser } = req;
 
-    subscriptions.subscribe({
-      next: (data) => {
-        tmpResult = data.data;
-      },
-      complete: async () => {
-        const { usedTokens, usedUSD } = this.calculateToken(requestId, {
-          systemMessage: tmpResult.text,
-          model: tmpResult.detail.model,
-        });
-        await this.transactionService.updateTokenUsage(requestId, messageId, { usedTokens, usedUSD });
-        req.res.end(); // Manually end the response on completion
+    let chatCompletionObject: CreateTransactionDto;
+    let chatCompletionObjectString: string;
+
+    chatCompletion$.subscribe({
+      next: (objStr: string) => {
+        chatCompletionObjectString = objStr;
       },
       error: (err) => {
-        throw err;
+        console.error('Error:', err);
+      },
+      complete: async () => {
+        chatCompletionObject = JSON.parse(chatCompletionObjectString);
+
+        if (!chatCompletionObject) {
+          throw new HttpException('There is no subscriptions from openAI', HttpStatusCode.NotFound);
+        }
+
+        const { usedTokens, usedUSD } = this.calculateToken(requestId, {
+          model: chatCompletionObject?.llmType as any,
+          assistantMessage: chatCompletionObject.message,
+        });
+
+        await this.transactionService.create(requestId, {
+          ...chatCompletionObject,
+          apiTokenRef: currentUser.userApiKey,
+          tokenUsage: { usedTokens, usedUSD },
+        });
       },
     });
   }

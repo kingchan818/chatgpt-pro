@@ -7,6 +7,9 @@ export class Transaction extends Document {
   messageId: string;
 
   @Prop({ required: true })
+  role: string;
+
+  @Prop({ required: true })
   message: string;
 
   @Prop({ type: Object, default: {} })

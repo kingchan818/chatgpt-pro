@@ -15,19 +15,19 @@ services:
     ports:
       - 8181:8181
 
-  ocr-service:
-    container_name: ocr-service
-    build: 
-      context: ./backend/ocr-service
-      dockerfile: Dockerfile
-      target: dev
-    volumes:
-      - ./backend/ocr-service:/app
-      - /app/node_modules
-    depends_on:
-      - mongo
-    ports:
-      - 8282:8282
+  # ocr-service:
+  #   container_name: ocr-service
+  #   build: 
+  #     context: ./backend/ocr-service
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   volumes:
+  #     - ./backend/ocr-service:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - mongo
+  #   ports:
+  #     - 8282:8282
 
   chatgpt:
     container_name: chatgpt
@@ -44,7 +44,6 @@ services:
       - 3000:3000
     depends_on:
       - chat-service
-      - ocr-service
       - mongo
     restart: unless-stopped
 

@@ -1,6 +1,6 @@
 import { Body, Controller, HttpException, Param, Post, Req, Sse, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { get, result } from 'lodash';
+import { get, isEmpty } from 'lodash';
 
 import { ChatgptService } from '../chatgpt/chatgpt.service';
 import { TransactionService } from '../transaction/transaction.service';
@@ -9,7 +9,6 @@ import { ChatService } from './chat.service';
 import { ChatDto } from './dto/chat.dto';
 import { HttpStatusCode } from 'axios';
 import { ChatGuard } from './chat.guard';
-import { Subscribable } from 'rxjs';
 
 @UseGuards(ChatGuard)
 @Controller('chat')
@@ -36,78 +35,62 @@ export class ChatController {
       model: gptModelType,
     });
 
-    const result = await this.transactionService.create(requestId, {
-      messageId: generateUniqueKey(),
-      collectionId: generateUniqueKey(),
-      apiTokenRef: currentUser.userApiKey,
-      message: body.message,
-      chatOptions: body.chatOptions,
-      tokenUsage: { usedTokens, usedUSD },
-      llmType: gptModelType,
-    });
+    // create system message and user message
+    const collectionId = generateUniqueKey();
+    const result = await this.transactionService.create(requestId, [
+      {
+        messageId: generateUniqueKey(),
+        collectionId,
+        role: 'system',
+        apiTokenRef: currentUser.userApiKey,
+        message: body.chatOptions?.systemMessage || this.configService.get('chatgpt.systemMessage'),
+        chatOptions: body.chatOptions,
+        tokenUsage: { usedTokens, usedUSD },
+        llmType: gptModelType,
+      },
+      {
+        messageId: generateUniqueKey(),
+        collectionId,
+        role: 'user',
+        apiTokenRef: currentUser.userApiKey,
+        message: body.message,
+        chatOptions: body.chatOptions,
+        tokenUsage: { usedTokens, usedUSD },
+        llmType: gptModelType,
+      },
+    ]);
+
     return result;
   }
 
-  @Sse('sse/:messageId')
-  async sse(@Req() req: any, @Param('messageId') messageId: string) {
+  @Sse('sse/:collectionId')
+  async sse(@Req() req: any, @Param('collectionId') collectionId: string) {
     const { requestId, currentUser } = req;
     // find msg in db
-    const foundTransaction = await this.transactionService.findOne(requestId, {
-      messageId,
-      apiTokenRef: currentUser.userApiKey,
-    });
+    const foundTransactions = await this.transactionService.find(
+      requestId,
+      { collectionId, apiTokenRef: currentUser.userApiKey },
+      { createdDT: 1 },
+    );
 
-    if (!foundTransaction) {
+    if (isEmpty(foundTransactions)) {
       throw new HttpException('Message not found', HttpStatusCode.NotFound);
     }
 
-    let subscriptions: Subscribable<any>;
-
-    if (!foundTransaction.parentMessageId) {
-      subscriptions = await this.chatgptService.startChatWithInit(requestId, currentUser, foundTransaction);
-    } else {
-      subscriptions = this.chatgptService.startChat({
-        requestId,
-        message: foundTransaction.message,
-        parentMessageId: foundTransaction.parentMessageId,
-      });
-    }
-
-    let chatgptGeneratedText = null;
-    subscriptions.subscribe({
-      next: ({ data }) => {
-        console.log(data);
-        chatgptGeneratedText = data.text;
-      },
+    const chatCompletion$ = this.chatgptService.createChatCompletion({
+      requestId,
+      openAIKey: currentUser.openAIKey,
+      messages: foundTransactions.map((transaction) => ({
+        role: transaction.role,
+        content: transaction.message,
+      })),
+      collectionId,
+      model: get(foundTransactions, '0.llmType'),
     });
 
-    subscriptions.subscribe({
-      complete: async () => {
-        console.log(chatgptGeneratedText, 'chatgptGeneratedText');
-        if (!chatgptGeneratedText) {
-          throw new HttpException('ChatGPT response not found', HttpStatusCode.NotFound);
-        }
+    this.chatService.handleSEESubscription(req, chatCompletion$);
 
-        const { usedTokens, usedUSD } = this.chatService.calculateToken(requestId, {
-          systemMessage: chatgptGeneratedText,
-          model: foundTransaction?.llmType as any,
-        });
-
-        await this.transactionService.create(requestId, {
-          messageId: generateUniqueKey(),
-          collectionId: foundTransaction.collectionId,
-          apiTokenRef: currentUser.userApiKey,
-          message: chatgptGeneratedText,
-          parentMessageId: foundTransaction?.parentMessageId,
-          tokenUsage: { usedTokens, usedUSD },
-          llmType: foundTransaction?.llmType as any,
-        });
-      },
-    });
-
-    // this function will calculate the token usage and save it to db when the subscription is completed
-    this.chatService.handleChatSubscription({ subscriptions, req, requestId, messageId });
-    return subscriptions;
+    return chatCompletion$;
   }
 
   @Post('continue')
@@ -129,8 +112,8 @@ export class ChatController {
       messageId: generateUniqueKey(),
       collectionId: body.collectionId,
       apiTokenRef: currentUser.userApiKey,
+      role: 'user',
       message: body.message,
-      parentMessageId: body.parentMessageId,
       tokenUsage: { usedTokens, usedUSD },
       llmType: gptModelType,
     });

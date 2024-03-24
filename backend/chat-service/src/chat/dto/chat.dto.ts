@@ -53,10 +53,6 @@ export class ChatOptionsDto {
 export class ChatDto {
   @IsOptional()
   @IsString()
-  parentMessageId?: string;
-
-  @IsOptional()
-  @IsString()
   collectionId?: string;
 
   @IsString()
