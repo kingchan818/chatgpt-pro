@@ -8,12 +8,31 @@ const TRANSFORM_SAVED_MESSAGE_CONFIG = [
     transformTo: 'text',
   },
   {
+    transformFrom: 'role',
+    transformTo: 'role',
+  },
+  {
+    transformFrom: 'collectionId',
+    transformTo: 'collectionId',
+  },
+];
+
+const TRANSFORM_USER_INPUT_CONFIG = [
+  {
+    transformFrom: 'messageId',
+    transformTo: 'id',
+  },
+  {
+    transformFrom: 'message',
+    transformTo: 'text',
+  },
+  {
     constant: 'User',
     transformTo: 'role',
   },
   {
-    transformFrom: 'parentMessageId',
-    transformTo: 'parentMessageId',
+    transformFrom: 'collectionId',
+    transformTo: 'collectionId',
   },
 ];
 
@@ -27,4 +46,5 @@ const TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS = [
 export default {
   TRANSFORM_SAVED_MESSAGE_CONFIG,
   TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS,
+  TRANSFORM_USER_INPUT_CONFIG,
 };

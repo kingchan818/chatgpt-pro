@@ -1,43 +1,40 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { FaArrowUp } from 'react-icons/fa6';
-import { isEmpty, get } from 'lodash';
+import { isEmpty } from 'lodash';
 import { useDispatch, useSelector } from 'react-redux';
-import { setInputMsg, handleSSEMessage } from '../redux/reducers/chat.reducer';
+import { handleSSEMessage } from '../redux/reducers/chat.reducer';
 
 function ChatInput() {
   const textareaRef = useRef(null);
   const dispatch = useDispatch();
-  const { inputMsg, messages = [], isProcessing } = useSelector((state) => state.chat);
+  const [input, setInputMsg] = useState('');
+  const { isProcessing } = useSelector((state) => state.chat);
 
   useEffect(() => {
     const { scrollHeight } = textareaRef.current;
     textareaRef.current.style.height = `${scrollHeight}px`;
 
-    if (inputMsg === '') {
+    if (input === '') {
       textareaRef.current.style.height = '44px';
     }
-  }, [inputMsg]);
+  }, [input]);
 
   const handleChange = (event) => {
-    dispatch(setInputMsg(event.target.value));
+    setInputMsg(event.target.value);
   };
 
   return (
     <div className="flex items-center justify-center mx-4">
       <InputStyle className=" sm:w-[30rem] md:w-[30rem] xl:w-[60rem]">
-        <textarea ref={textareaRef} value={inputMsg} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
+        <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
         {/* keep button on the button */}
         <button
           type="button"
           className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
-            !isEmpty(inputMsg) ? 'bg-white cursor-pointer' : 'input-button-opacity'
+            !isEmpty(input) ? 'bg-white cursor-pointer' : 'input-button-opacity'
           } flex items-center`}
-          onClick={() =>
-            dispatch(
-              handleSSEMessage({ message: inputMsg, parentMessageId: get(messages, [messages.length - 1, 'parentMessageId']) }),
-            )
-          }
+          onClick={() => dispatch(handleSSEMessage({ message: input }))}
         >
           {isProcessing ? (
             <svg

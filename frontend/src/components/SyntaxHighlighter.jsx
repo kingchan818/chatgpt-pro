@@ -19,7 +19,7 @@ function SyntaxHighlighter({ node, inline, className, children, ...props }) {
 
   const copyCode = (e) => {
     e.preventDefault();
-    // navigator.clipboard.writeText(codeString);
+    navigator.clipboard.writeText(children);
     setCopied(true);
     setTimeout(() => {
       setCopied(false);

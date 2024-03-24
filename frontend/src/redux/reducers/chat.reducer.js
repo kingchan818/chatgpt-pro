@@ -1,27 +1,27 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { isEmpty, get, omitBy, isUndefined } from 'lodash';
+import { isEmpty, get, omitBy, isUndefined, isNil } from 'lodash';
 import { transformHelper } from '../../utils';
-import { MAPPING_CONFIGS } from '../../domain';
+import { MAPPING_CONFIGS, ENDPOINTS } from '../../domain';
 
-export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async ({ message, parentMessageId }, thunkAPI) => {
+export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async ({ message }, thunkAPI) => {
   try {
     // TODO: create a axios service, that encapsulates the axios config
     let url;
     let requestData;
 
-    if (!parentMessageId) {
-      const { modelConfigurator } = thunkAPI.getState();
-      console.log(modelConfigurator);
-      const chatOptions = transformHelper(modelConfigurator, MAPPING_CONFIGS.TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS);
-      console.log('chatOptions', chatOptions);
+    let { currentCollectionId: collectionId } = thunkAPI.getState().chat;
 
-      url = 'http://localhost:8181/chat/create';
+    if (isEmpty(collectionId) || isNil(collectionId)) {
+      const { modelConfigurator } = thunkAPI.getState();
+      const chatOptions = transformHelper(modelConfigurator, MAPPING_CONFIGS.TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS);
+
+      url = ENDPOINTS.CREATE_CHAT_ENDPOINT;
       requestData = omitBy({ message, chatOptions }, isEmpty);
     } else {
-      url = 'http://localhost:8181/chat/continue';
-      requestData = { message, parentMessageId };
+      url = ENDPOINTS.CONTINUE_CHAT_ENDPOINT;
+      requestData = { message, collectionId };
     }
 
     const response = await axios({
@@ -33,13 +33,21 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
       },
       data: omitBy(requestData, isUndefined),
     });
-    const data = get(response, 'data');
-    const messageId = get(data, 'messageId');
-    const transformMessage = transformHelper(data, MAPPING_CONFIGS.TRANSFORM_SAVED_MESSAGE_CONFIG);
+
+    let data = {};
+    if (url === ENDPOINTS.CREATE_CHAT_ENDPOINT) {
+      thunkAPI.dispatch(setCollectionId(get(response, 'data.1.collectionId')));
+      data = get(response, 'data.1', {});
+    } else {
+      data = get(response, 'data', {});
+    }
+
+    collectionId = thunkAPI.getState().chat.currentCollectionId;
+    const transformMessage = transformHelper(data, MAPPING_CONFIGS.TRANSFORM_USER_INPUT_CONFIG);
     // push the saved message that comes from backend
     thunkAPI.dispatch(pushMessage(transformMessage));
 
-    await fetchEventSource(`http://localhost:8181/chat/sse/${messageId}`, {
+    await fetchEventSource(`http://localhost:8181/chat/sse/${collectionId}`, {
       headers: {
         'x-auth-key': localStorage.getItem('apiKey'),
       },
@@ -50,9 +58,12 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
           res = JSON.parse(streamMsg);
         }
 
-        if (res && res.text) {
+        if (res && res.message) {
+          res = transformHelper(res, MAPPING_CONFIGS.TRANSFORM_SAVED_MESSAGE_CONFIG);
           thunkAPI.dispatch(setStreamMsg(res));
         }
+
+        return res;
       },
       onerror(event) {
         return event?.target?.close();
@@ -73,12 +84,14 @@ const chatSlice = createSlice({
     streamMessage: {},
     isProcessing: false,
     currentMessageDetails: null,
+    currentCollectionId: null,
     error: null,
   },
   reducers: {
     setStreamMsg: (state, action) => ({ ...state, streamMessage: action.payload }),
     setInputMsg: (state, action) => ({ ...state, inputMsg: action.payload }),
     pushMessage: (state, action) => ({ ...state, messages: [...state.messages, action.payload] }),
+    setCollectionId: (state, action) => ({ ...state, currentCollectionId: action.payload }),
   },
   extraReducers: (builder) => {
     builder
@@ -94,6 +107,6 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setInputMsg, pushMessage, setStreamMsg } = chatSlice.actions;
+export const { setInputMsg, pushMessage, setStreamMsg, setCollectionId } = chatSlice.actions;
 
 export default chatSlice.reducer;
