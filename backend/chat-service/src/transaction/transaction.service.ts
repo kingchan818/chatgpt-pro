@@ -3,7 +3,7 @@ import { Model } from 'mongoose';
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 
-import { get, set } from 'lodash';
+import { get, isEmpty, set } from 'lodash';
 import { CustomLoggerService } from '../logger/logger.service';
 import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
@@ -16,7 +16,7 @@ export class TransactionService {
     private readonly logger: CustomLoggerService,
   ) {}
 
-  create(requestId: string, createTransactionDto: CreateTransactionDto) {
+  create(requestId: string, createTransactionDto: CreateTransactionDto[] | CreateTransactionDto) {
     this.logger.log(`[${requestId}] -- Create new chat transaction`);
     this.logger.verbose(
       `[${requestId}] -- Create new chat transaction ${JSON.stringify(createTransactionDto)}`,
@@ -35,14 +35,7 @@ export class TransactionService {
   update(messageId: string, updateTransactionDto: UpdateTransactionDto) {
     this.logger.log(`[${messageId}] -- Update chat transaction`);
     this.logger.verbose(`[${messageId}] -- Update chat transaction ${JSON.stringify(updateTransactionDto)}`);
-    return this.transactionModel
-      .updateOne(
-        {
-          messageId,
-        },
-        updateTransactionDto,
-      )
-      .exec();
+    return this.transactionModel.updateOne({ messageId }, updateTransactionDto).exec();
   }
 
   async updateTokenUsage(requestId: string, messageId: string, tokenUsage: Record<string, any>) {
@@ -67,12 +60,18 @@ export class TransactionService {
     return this.update(messageId, { tokenUsage });
   }
 
-  find(requestId: string, documentFields: Record<string, any>) {
+  find(requestId: string, documentFields: Record<string, any>, sortFields?: Record<string, any>) {
     this.logger.log(`[${requestId}] -- Find chat transaction by document fields`);
     this.logger.verbose(
       `[${requestId}] -- Find chat transaction by document fields ${JSON.stringify(documentFields)}`,
     );
-    return this.transactionModel.find(documentFields).exec();
+    const findFn = this.transactionModel.find(documentFields);
+
+    if (isEmpty(sortFields)) {
+      findFn.sort(sortFields);
+    }
+
+    return findFn.exec();
   }
 
   async constructAllCollectionIdsByCurrentUser(requestId: string, currentUser: any) {

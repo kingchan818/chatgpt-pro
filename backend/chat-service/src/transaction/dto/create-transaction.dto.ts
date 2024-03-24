@@ -6,7 +6,8 @@ export class CreateTransactionDto {
   parentMessageId?: string;
   apiTokenRef: string;
   chatOptions?: Record<string, any>;
-  llmType: supportModelType;
+  llmType: supportModelType | string;
   tokenUsage: Record<string, any>;
   collectionId: string;
+  role: 'system' | 'user' | 'assistant';
 }

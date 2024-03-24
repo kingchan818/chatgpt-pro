@@ -1,24 +1,21 @@
-import { HttpException, HttpStatus, Injectable, OnModuleInit, Scope } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, Scope } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { get, isEmpty } from 'lodash';
-import { Observable, map } from 'rxjs';
+import { Observable } from 'rxjs';
 import { CustomLoggerService } from 'src/logger/logger.service';
 import axios from 'axios';
-export const importDynamic = new Function('modulePath', 'return import(modulePath)');
+import OpenAI from 'openai';
+import { generateUniqueKey } from 'src/utils';
+import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto';
 
-@Injectable({ scope: Scope.TRANSIENT })
-export class ChatgptService implements OnModuleInit {
+@Injectable({ scope: Scope.DEFAULT })
+export class ChatgptService {
   chatGPTAPI: any;
   importChatGptInstance: any;
   constructor(
     private readonly configureService: ConfigService,
     private readonly logger: CustomLoggerService,
   ) {}
-
-  async onModuleInit() {
-    const { ChatGPTAPI } = await importDynamic('chatgpt');
-    this.importChatGptInstance = ChatGPTAPI;
-  }
 
   async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
     this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
@@ -41,51 +38,63 @@ export class ChatgptService implements OnModuleInit {
     }
   }
 
-  async init(openAIAPIKey: string, chatgptOptions?: any) {
-    const defaultConfig = this.configureService.get('chatgpt');
-    isEmpty(chatgptOptions) && this.logger.log('No chatgpt options provided, using default config');
-    !isEmpty(chatgptOptions) && this.logger.log('Using provided chatgpt options');
-    this.chatGPTAPI = new this.importChatGptInstance({
-      apiKey: openAIAPIKey,
-      ...defaultConfig,
-      completionParams: { ...chatgptOptions },
-      debug: true,
-    });
+  createChatCompletion(params: {
+    requestId: string;
+    openAIKey: string;
+    messages: any[];
+    model?: string;
+    collectionId: string;
+    [key: string]: any;
+  }) {
+    const { requestId, openAIKey, messages, model, collectionId } = params;
 
-    return this.chatGPTAPI;
-  }
+    this.logger.log(`[${requestId}] -- Create chat completion`);
 
-  async startChatWithInit(requestId: string, currentUser: any, transaction: any) {
-    await this.init(currentUser.openAIKey, transaction.chatOptions);
-    return this.startChat({
-      requestId,
-      message: transaction.message,
-      parentMessageId: transaction?.parentMessageId,
-    });
-  }
+    const completionObservable = new Observable((subscriber) => {
+      (async () => {
+        try {
+          const openAI = new OpenAI({ apiKey: openAIKey });
+          const completion = await openAI.chat.completions.create({
+            messages,
+            model: model || this.configureService.get('chatgpt.completionParams.model'),
+            stream: true,
+          });
 
-  startChat(params: { requestId: string; message: string; parentMessageId?: string }) {
-    const { message, parentMessageId } = params;
-    isEmpty(parentMessageId) &&
-      this.logger.log(`[${params.requestId}] -- No parentMessageId provided, starting new chat`);
+          const transactionObj: CreateTransactionDto = {
+            collectionId,
+            role: 'assistant',
+            chatOptions: {},
+            message: '',
+            apiTokenRef: '',
+            messageId: generateUniqueKey(),
+            llmType: model,
+            tokenUsage: {},
+          };
 
-    !isEmpty(parentMessageId) &&
-      this.logger.log(
-        `[${params.requestId}] -- parentMessageId provided, continuing chat ${parentMessageId}`,
-      );
+          let msg = '';
 
-    const observer = new Observable((subscriber) => {
-      this.chatGPTAPI.sendMessage(message, {
-        parentMessageId,
-        onProgress: (partialResponse) => {
-          subscriber.next(partialResponse);
-          if (partialResponse.detail.choices[0].finish_reason === 'stop') {
-            subscriber.complete();
+          for await (const chunk of completion) {
+            if (subscriber.closed) {
+              break;
+            }
+
+            const chatgptContent = chunk.choices[0].delta.content;
+            msg += isEmpty(chatgptContent) ? '' : chatgptContent;
+
+            subscriber.next(
+              JSON.stringify({
+                ...transactionObj,
+                message: msg,
+              }),
+            );
           }
-        },
-      });
+          subscriber.complete();
+        } catch (error) {
+          subscriber.error(error);
+        }
+      })();
     });
 
-    return observer.pipe(map((response) => ({ data: response })));
+    return completionObservable;
   }
 }
