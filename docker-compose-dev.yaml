@@ -1,0 +1,57 @@
+version: '3.5'
+
+services:
+  chat-service:
+    container_name: chat-service
+    build: 
+      context: ./backend/chat-service
+      dockerfile: Dockerfile
+      target: dev
+    volumes:
+      - ./backend/chat-service:/app
+      - /app/node_modules
+    depends_on:
+      - mongo
+    ports:
+      - 8181:8181
+
+  # ocr-service:
+  #   container_name: ocr-service
+  #   build: 
+  #     context: ./backend/ocr-service
+  #     dockerfile: Dockerfile
+  #     target: dev
+  #   volumes:
+  #     - ./backend/ocr-service:/app
+  #     - /app/node_modules
+  #   depends_on:
+  #     - mongo
+  #   ports:
+  #     - 8282:8282
+
+  chatgpt:
+    container_name: chatgpt
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: dev
+    env_file:
+      - ./docker-env/frontend.env
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    ports:
+      - 3000:3000
+    depends_on:
+      - chat-service
+      - mongo
+    restart: unless-stopped
+
+  mongo:
+    container_name: mongo
+    image: mongo
+    restart: always
+    ports:
+      - 27017:27017
+    volumes:
+      - ./data/db:/data/db
