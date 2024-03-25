@@ -1,0 +1,26 @@
+name: 'chatgpt-chat-service'
+
+http:
+  host: 'localhost'
+  port: 8181
+  cors:
+    origin: 'http://react-app:3000'
+
+aes-key: 'chatgpt-chat-service'
+
+mongodb:
+  uris: 'mongodb://mongo:27017'
+  database: 'chatgpt-pro'
+  options:
+    noDelay: true
+    retryAttempts: 5
+    directConnection: true
+
+chatgpt:
+  systemMessage: 'You are an AI that is playing the role of a 10 years experience software engineer.'
+  debug: false
+  systemMessageDelay: 1000
+  timeoutMs: 160000
+  completionParams:
+    model: 'gpt-3.5-turbo-0613'
+    temperature: 0.9
