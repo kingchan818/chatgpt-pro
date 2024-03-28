@@ -23,8 +23,8 @@ jobs:
         name: Build Docker image from Frontend Project
         uses: docker/build-push-action@v2
         with:
-          context: ./frontend
-          file: Dockerfile
+          context: .
+          file: frontend/Dockerfile
           push: true
           tags: kingchan818/chatgpt-pro:latest
 
@@ -44,7 +44,7 @@ jobs:
         name: Build Docker image from Frontend Project
         uses: docker/build-push-action@v2
         with:
-          context: ./backend/chat-service
-          file: Dockerfile
+          context: .
+          file: backend/chat-service/Dockerfile
           push: true
           tags: kingchan818/chatgpt-pro-chat-service:latest
