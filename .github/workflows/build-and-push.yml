@@ -23,7 +23,7 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./frontend
-          file: ./frontend/dockerfile
+          file: frontend/Dockerfile
           push: true
           tags: kingchan818/chatgpt-pro:latest
 
@@ -44,6 +44,6 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: ./backend/chat-service
-          file: ./backend/chat-service/dockerfile
+          file: backend/chat-service/Dockerfile
           push: true
           tags: kingchan818/chatgpt-pro-chat-service:latest
