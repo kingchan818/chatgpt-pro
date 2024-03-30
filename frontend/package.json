@@ -25,7 +25,8 @@
     "remark-gfm": "^4.0.0",
     "serve": "^14.2.1",
     "styled-components": "^6.1.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "react-inject-env": "^2.1.0"
   },
   "scripts": {
     "start": "react-scripts start",
