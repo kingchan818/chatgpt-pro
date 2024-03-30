@@ -47,7 +47,7 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
     // push the saved message that comes from backend
     thunkAPI.dispatch(pushMessage(transformMessage));
 
-    await fetchEventSource(`http://localhost:8181/chat/sse/${collectionId}`, {
+    await fetchEventSource(`${ENDPOINTS.CHAT_SSE_ENDPOINT}/${collectionId}`, {
       headers: {
         'x-auth-key': localStorage.getItem('apiKey'),
       },
