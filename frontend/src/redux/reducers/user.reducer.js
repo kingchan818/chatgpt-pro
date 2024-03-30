@@ -1,11 +1,12 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
+import {ENDPOINTS} from '../../domain'
 
 export const register = createAsyncThunk('users/fetchByIdStatus', async (openAIAPIKey, thunkAPI) => {
   try {
     const response = await axios({
       method: 'post',
-      url: 'http://192.168.1.7:8181/auth/register',
+      url: ENDPOINTS.ACCOUNT_REGISTER_ENDPOINT,
       data: { openAIAPIKey },
     });
     localStorage.setItem('apiKey', response.data.apiKey);

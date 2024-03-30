@@ -21,4 +21,4 @@ RUN npm run build
 
 FROM base AS prod
 COPY --from=build /app/build /app/build
-CMD ["/bin/sh", "-c", "npx runtime-env-cra && npx serve -s build"]
+CMD ["npx", "serve", "-s", "build"]
