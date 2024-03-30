@@ -10,15 +10,9 @@ CMD ["npm", "run", "start"]
 
 
 FROM base AS build
-ARG REACT_APP_BACKEND_PROTOCOL
-ARG REACT_APP_BACKEND_HOST
-ARG REACT_APP_BACKEND_PORT
-ENV REACT_APP_BACKEND_PROTOCOL=$REACT_APP_BACKEND_PROTOCOL
-ENV REACT_APP_BACKEND_HOST=$REACT_APP_BACKEND_HOST
-ENV REACT_APP_BACKEND_PORT=$REACT_APP_BACKEND_PORT
 RUN npm run build
 
 
 FROM base AS prod
 COPY --from=build /app/build /app/build
-CMD ["npx", "serve", "-s", "build"]
+ENTRYPOINT npx react-inject-env set && npx serve -s build
