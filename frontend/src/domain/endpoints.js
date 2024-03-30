@@ -6,4 +6,6 @@ const BASE_URL = `${protocol}://${host}:${port}`;
 const CREATE_CHAT_ENDPOINT = `${BASE_URL}/chat/create`;
 const CONTINUE_CHAT_ENDPOINT = `${BASE_URL}/chat/continue`;
 
+console.debug('BASE_URL:', BASE_URL);
+
 export default { CREATE_CHAT_ENDPOINT, CONTINUE_CHAT_ENDPOINT };
