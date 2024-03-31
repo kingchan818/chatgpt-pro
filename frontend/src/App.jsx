@@ -5,6 +5,7 @@ import { isNil, isEmpty } from 'lodash';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import { setCurrentUser } from './redux/reducers/user.reducer';
+import { ThemeProvider } from './components/theme-provider';
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
@@ -18,9 +19,11 @@ function App() {
   }, [dispatch]);
 
   return (
-    <BrowserRouter basename="/">
-      <Routes>{isNil(currentUser) ? <Route path="/" Component={Login} /> : <Route path="/" Component={Home} />}</Routes>
-    </BrowserRouter>
+    <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
+      <BrowserRouter basename="/">
+        <Routes>{isNil(currentUser) ? <Route path="/" Component={Login} /> : <Route path="/" Component={Home} />}</Routes>
+      </BrowserRouter>
+    </ThemeProvider>
   );
 }
 
