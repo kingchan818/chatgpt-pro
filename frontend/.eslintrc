@@ -44,6 +44,33 @@
         ],
         "react/jsx-props-no-spreading": [
             "off"
+        ],
+        "react/prop-types": [
+            "off"
+        ],
+        "import/extensions": [
+            "error",
+            "ignorePackages",
+            {
+                "js": "never",
+                "jsx": "never"
+            }
         ]
+    },
+    "settings": {
+        "import/resolver": {
+            "alias": {
+                "map": [
+                    [
+                        "@",
+                        "./src"
+                    ]
+                ],
+                "extensions": [
+                    ".js",
+                    ".jsx"
+                ]
+            }
+        }
     }
 }
