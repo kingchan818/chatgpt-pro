@@ -1,6 +1,8 @@
 {
 	"name": "Dev Container",
-	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
 	"postCreateCommand": "nvm install && npm install; mkdir -p docker-env && touch docker-env/frontend.env",
-	"postStartCommand": "docker-compose -f docker-compose-dev.yaml up"
+	"postStartCommand": "docker-compose -f docker-compose-dev.yaml up -d"
 }
