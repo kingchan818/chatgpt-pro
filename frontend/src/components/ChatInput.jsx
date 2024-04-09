@@ -24,9 +24,15 @@ function ChatInput() {
     setInputMsg(event.target.value);
   };
 
+  const submitMessage = () => {
+    if(isEmpty(input)) return;
+    dispatch(handleSSEMessage({ message: input }));
+    setInputMsg('');
+  }
+
   return (
     <div className="flex items-center justify-center mx-4">
-      <InputStyle className=" sm:w-[30rem] md:w-[30rem] xl:w-[60rem]">
+      <InputStyle className="sm:w-full md:w-[40rem] xl:w-[60rem] w-[50rem]">
         <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
         {/* keep button on the button */}
         <button
@@ -34,7 +40,7 @@ function ChatInput() {
           className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
             !isEmpty(input) ? 'bg-white cursor-pointer' : 'input-button-opacity'
           } flex items-center`}
-          onClick={() => dispatch(handleSSEMessage({ message: input }))}
+          onClick={submitMessage}
         >
           {isProcessing ? (
             <svg
