@@ -1,0 +1,5 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"postCreateCommand": "nvm install && npm install; mkdir -p docker-env && touch docker-env/frontend.env",
+	"postStartCommand": "docker-compose -f docker-compose-dev.yaml up"
+}
