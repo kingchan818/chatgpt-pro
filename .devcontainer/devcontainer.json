@@ -1,0 +1,8 @@
+{
+	"name": "Dev Container",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+	"postCreateCommand": "nvm install && npm install; mkdir -p docker-env && touch docker-env/frontend.env",
+	"postStartCommand": "docker-compose -f docker-compose-dev.yaml up -d"
+}
