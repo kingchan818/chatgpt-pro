@@ -1,9 +1,9 @@
-version: '3'
+version: "3"
 
 services:
   mongo:
     container_name: mongo
-    image: mongo
+    image: mongo:4.4.6
     restart: always
     ports:
       - 27017:27017
@@ -11,24 +11,20 @@ services:
       - mongo-data:/data/db
 
   react-app:
-    build: 
-      context: ./frontend
-      dockerfile: Dockerfile
-      target: prod
+    image: "kingchan818/chatgpt-pro"
     ports:
-      - "3000:3000"
+      - "3222:3000"
     depends_on:
       - chat-service
     environment:
-      - REACT_APP_BACKEND_PROTOCOL=change-me
-      - REACT_APP_BACKEND_HOST=change-me.com
-      - REACT_APP_BACKEND_PORT=change-me
+      - REACT_APP_BACKEND_PROTOCOL={{backend_protocol}}
+      - REACT_APP_BACKEND_HOST={{backend_host}}
+      - REACT_APP_BACKEND_PORT={{backend_port}}
 
   chat-service:
-    build: 
-      context: ./backend/chat-service
-      dockerfile: Dockerfile
-      target: prod
+    image: "kingchan818/chatgpt-pro-chat-service"
+    depends_on:
+      - mongo
     ports:
       - "8181:8181"
 volumes:
