@@ -1,12 +1,17 @@
 import * as CryptoJS from 'crypto-js';
 
-export function encrypt(text: string, secret: string): string {
-  const ciphertext = CryptoJS.AES.encrypt(text, secret);
-  return ciphertext.toString();
+export function encrypt(plaintext: string, key: string) {
+  const hash = CryptoJS.SHA256(key);
+  const encrypted = CryptoJS.AES.encrypt(plaintext, hash, {
+    mode: CryptoJS.mode.ECB,
+  });
+  return encrypted.toString();
 }
 
-export function decrypt(ciphertext: string, secret: string): string {
-  const bytes = CryptoJS.AES.decrypt(ciphertext, secret);
-  const originalText = bytes.toString(CryptoJS.enc.Utf8);
-  return originalText;
+export function decrypt(ciphertext: string, key: string) {
+  const hash = CryptoJS.SHA256(key);
+  const decrypted = CryptoJS.AES.decrypt(ciphertext, hash, {
+    mode: CryptoJS.mode.ECB,
+  });
+  return decrypted.toString(CryptoJS.enc.Utf8);
 }

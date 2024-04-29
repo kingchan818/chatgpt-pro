@@ -19,6 +19,7 @@ export class MongoExceptionFilter extends HttpException implements ExceptionFilt
         break;
       default:
         set(responseObj, 'mongodbErrorCode', exception.code);
+        set(responseObj, 'message', exception.message);
         set(responseObj, 'timestamp', new Date().toISOString());
         set(responseObj, 'path', request.url);
         break;

@@ -1,19 +1,23 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { InjectConnection } from '@nestjs/mongoose';
 import { HttpStatusCode } from 'axios';
 import { GPTTokens, supportModelType } from 'gpt-tokens';
 import { isEmpty } from 'lodash';
+import { Connection } from 'mongoose';
 import { Observable } from 'rxjs';
+import { ApiKeyService } from 'src/api-key/api-key.service';
 import { CustomLoggerService } from 'src/logger/logger.service';
 import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto';
 import { TransactionService } from 'src/transaction/transaction.service';
+import { sessionTransaction } from 'src/utils/common';
 
 @Injectable()
 export class ChatService {
   constructor(
     private readonly logger: CustomLoggerService,
-    private readonly configService: ConfigService,
     private readonly transactionService: TransactionService,
+    private readonly apiKeyService: ApiKeyService,
+    @InjectConnection() private readonly connection: Connection,
   ) {}
 
   calculateToken(
@@ -27,12 +31,7 @@ export class ChatService {
   ) {
     this.logger.log(`[${requestId}] -- Calculate chatgpt token`);
 
-    const {
-      model = this.configService.get<string>('chatgpt.completionParams.model') as supportModelType,
-      systemMessage = this.configService.get<string>('chatgpt.systemMessage'),
-      userMessage,
-      assistantMessage,
-    } = params;
+    const { model, systemMessage, userMessage, assistantMessage } = params;
 
     const messages: any = [
       { role: 'system', content: systemMessage },
@@ -69,10 +68,14 @@ export class ChatService {
           assistantMessage: chatCompletionObject.message,
         });
 
-        await this.transactionService.create(requestId, {
-          ...chatCompletionObject,
-          apiTokenRef: currentUser.userApiKey,
-          tokenUsage: { usedTokens, usedUSD },
+        await sessionTransaction(this.connection, async (session: any) => {
+          await this.transactionService.create(requestId, {
+            ...chatCompletionObject,
+            apiTokenRef: currentUser.userApiKey,
+            tokenUsage: { usedTokens, usedUSD },
+          });
+
+          await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD }, session);
         });
       },
     });

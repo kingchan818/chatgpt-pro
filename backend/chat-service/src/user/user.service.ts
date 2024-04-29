@@ -7,31 +7,30 @@ import { CustomLoggerService } from '../logger/logger.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './schema/user.shcema';
-import { generateUniqueKey } from '../utils';
+import { ApiKeyService } from 'src/api-key/api-key.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly logger: CustomLoggerService,
+    private readonly apiKeyService: ApiKeyService,
   ) {}
 
-  create(requestId: string, createUserDto: CreateUserDto) {
+  async create(requestId: string, createUserDto: CreateUserDto, mongoSession?: any) {
     this.logger.log(`[${requestId}] -- Create new user`);
-    const apiKey = generateUniqueKey();
-    createUserDto.apiKeys = [apiKey];
-    return this.userModel.create(createUserDto);
+
+    const dbModel = {
+      openAIToken: createUserDto.openAIToken,
+      apiKeys: [createUserDto?.apiKeys[0]],
+    };
+    return this.userModel.create([dbModel], { session: mongoSession });
   }
 
-  async appendNewApiKey(requestId: string) {
+  async appendNewApiKey(requestId: string, createUserDto?: CreateUserDto) {
     this.logger.log(`[${requestId}] -- Append new API key`);
-    await this.userModel
-      .updateOne({
-        $push: {
-          apiKeys: generateUniqueKey(),
-        },
-      })
-      .exec();
+    const { _id: apiKey } = await this.apiKeyService.create({ name: createUserDto.username || 'admin' });
+    await this.userModel.updateOne({ $push: { apiKeys: apiKey } }).exec();
   }
 
   findAll() {
@@ -41,6 +40,11 @@ export class UserService {
   findOne(requestId: string, documentFields: Record<string, any>) {
     this.logger.log(`[${requestId}] -- Find user by document fields`);
     return this.userModel.findOne(documentFields);
+  }
+
+  checkUserUsageLimit(requestId: string, apiKey: string) {
+    this.logger.log(`[${requestId}] -- Check user usage limit`);
+    return this.userModel.findOne({ apiKeys: apiKey });
   }
 
   async update(requestId: string, updateUserDto: UpdateUserDto) {

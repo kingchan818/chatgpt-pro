@@ -16,19 +16,16 @@ export class TransactionService {
     private readonly logger: CustomLoggerService,
   ) {}
 
-  create(requestId: string, createTransactionDto: CreateTransactionDto[] | CreateTransactionDto) {
+  create(requestId: string, createTransactionDto: CreateTransactionDto[] | CreateTransactionDto, session?: any) {
     this.logger.log(`[${requestId}] -- Create new chat transaction`);
-    this.logger.verbose(
-      `[${requestId}] -- Create new chat transaction ${JSON.stringify(createTransactionDto)}`,
-    );
-    return this.transactionModel.create(createTransactionDto);
+    this.logger.verbose(`[${requestId}] -- Create new chat transaction ${JSON.stringify(createTransactionDto)}`);
+    const createTransactionDtos = Array.isArray(createTransactionDto) ? createTransactionDto : [createTransactionDto];
+    return this.transactionModel.create(createTransactionDtos, { session });
   }
 
   findOne(requestId: string, documentFields: Record<string, any>) {
     this.logger.log(`[${requestId}] -- Find one chat transaction by document fields`);
-    this.logger.verbose(
-      `[${requestId}] -- Find one chat transaction by document fields ${JSON.stringify(documentFields)}`,
-    );
+    this.logger.verbose(`[${requestId}] -- Find one chat transaction by document fields ${JSON.stringify(documentFields)}`);
     return this.transactionModel.findOne(documentFields).exec();
   }
 
@@ -40,9 +37,7 @@ export class TransactionService {
 
   async updateTokenUsage(requestId: string, messageId: string, tokenUsage: Record<string, any>) {
     this.logger.log(`[${requestId}] -- Update chat transaction token usage`);
-    this.logger.verbose(
-      `[${requestId}] -- Update chat transaction token usage ${JSON.stringify(tokenUsage)}`,
-    );
+    this.logger.verbose(`[${requestId}] -- Update chat transaction token usage ${JSON.stringify(tokenUsage)}`);
     const foundResult = await this.findOne(requestId, { messageId });
 
     if (!foundResult) {
@@ -62,9 +57,7 @@ export class TransactionService {
 
   find(requestId: string, documentFields: Record<string, any>, sortFields?: Record<string, any>) {
     this.logger.log(`[${requestId}] -- Find chat transaction by document fields`);
-    this.logger.verbose(
-      `[${requestId}] -- Find chat transaction by document fields ${JSON.stringify(documentFields)}`,
-    );
+    this.logger.verbose(`[${requestId}] -- Find chat transaction by document fields ${JSON.stringify(documentFields)}`);
     const findFn = this.transactionModel.find(documentFields);
 
     if (isEmpty(sortFields)) {
@@ -91,9 +84,7 @@ export class TransactionService {
 
   delete(requestId: string, documentFields: Record<string, any>) {
     this.logger.log(`[${requestId}] -- Delete chat transaction by document fields`);
-    this.logger.verbose(
-      `[${requestId}] -- Delete chat transaction by document fields ${JSON.stringify(documentFields)}`,
-    );
+    this.logger.verbose(`[${requestId}] -- Delete chat transaction by document fields ${JSON.stringify(documentFields)}`);
     return this.transactionModel.deleteOne(documentFields).exec();
   }
 }

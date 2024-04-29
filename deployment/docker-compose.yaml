@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  react-app:
+    image: 'kingchan818/chatgpt-pro'
+    ports:
+      - '3222:3000'
+    depends_on:
+      - chat-service
+    environment:
+      - REACT_APP_BACKEND_PROTOCOL={{backend_protocol}}
+      - REACT_APP_BACKEND_HOST={{backend_host}}
+      - REACT_APP_BACKEND_PORT={{backend_port}}
+
+  chat-service:
+    image: 'kingchan818/chatgpt-pro-chat-service'
+    environment:
+      - DB_URI={{mongodb_uris}}
+      - DB_NAME={{mongodb_database}}
+      - ENCRYPTION_KEY={{aes_key}}
+      - DB_REPLICA_SET={{mongodb_replica_set}}
+    ports:
+      - '8181:8181'

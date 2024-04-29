@@ -4,12 +4,16 @@ import { AuthService } from '../auth/auth.service';
 import { CustomLoggerService } from '../logger/logger.service';
 import { v4 as uuidv4 } from 'uuid';
 import { get } from 'lodash';
+import { inspectData } from 'src/utils/common';
+import { decrypt } from 'src/utils';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class RequestInterceptor implements NestInterceptor {
   constructor(
     private logger: CustomLoggerService,
     private authService: AuthService,
+    private configService: ConfigService,
   ) {}
 
   async intercept(context: ExecutionContext, next: CallHandler): Promise<Observable<any>> {
@@ -31,7 +35,11 @@ export class RequestInterceptor implements NestInterceptor {
       const userApiKey = headers['x-auth-key'].toString();
       const currentUser = await this.authService.validateAndReturnUser('REQUEST-INTERCEPTOR', userApiKey);
       const openAIKey = get(currentUser, 'openAIToken');
-      request.currentUser = { openAIKey, userApiKey };
+      const encryptionKey = this.configService.get('encryption.key');
+      request.currentUser = {
+        openAIKey: decrypt(openAIKey, encryptionKey),
+        userApiKey,
+      };
     }
 
     if (request.url.includes('sse')) {
@@ -40,9 +48,9 @@ export class RequestInterceptor implements NestInterceptor {
     }
 
     this.logger.log(
-      `[${className}.${handlerName}] START [${request.requestId}] - ${request.method} ${
-        request.url
-      } params: ${JSON.stringify(request.params)} body: ${JSON.stringify(request.body)}`,
+      `[${className}.${handlerName}] START [${request.requestId}] - ${request.method} ${request.url} params: ${inspectData(
+        request.params,
+      )} body: ${inspectData(request.body)}`,
       RequestInterceptor.name,
     );
 
@@ -55,9 +63,9 @@ export class RequestInterceptor implements NestInterceptor {
       .pipe(
         tap(() =>
           this.logger.log(
-            `[${className}.${handlerName}] END [${request.requestId}]  - ${request.method} ${
-              request.url
-            } params: ${JSON.stringify(request.params)} body: ${JSON.stringify(request.body)}`,
+            `[${className}.${handlerName}] END [${request.requestId}]  - ${request.method} ${request.url} params: ${inspectData(
+              request.params,
+            )} body: ${inspectData(request.body)}`,
             RequestInterceptor.name,
           ),
         ),

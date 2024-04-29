@@ -6,8 +6,8 @@ export class User extends Document {
   @Prop({ required: true, index: true, unique: true })
   openAIToken: string;
 
-  @Prop({ type: [String], index: true, default: [], unique: true, max: 20 })
-  apiKeys: string[];
+  @Prop({ type: [{ type: String, ref: 'ApiKey' }], default: [] })
+  apiKeys: string[]; // Array of ApiKey values (which are the _id in ApiKey collection)
 
   @Prop({ default: () => new Date().toISOString(), required: true })
   updatedDT: string;

@@ -22,7 +22,7 @@ export class AuthService {
 
   async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
     this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
-    await this.chatgptService.validateOpenAIAPIKey(requestId, openAIAPIKey);
+    await this.chatgptService.loadAvailableModels(requestId, openAIAPIKey);
     return true;
   }
 }

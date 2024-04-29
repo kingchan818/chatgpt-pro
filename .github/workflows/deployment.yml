@@ -24,8 +24,12 @@ jobs:
           password: ${{ secrets.PORTAINER_PASSWORD }}
           endpointId: 2
           variables: |
-            backend_protocol=https
-            backend_host=gptchatservice.calvinchan.space
-            backend_port=443
+            backend_protocol=${{ secrets.BACKEND_PROTOCOL }}
+            backend_host=${{ secrets.BACKEND_HOST }}
+            backend_port=${{ secrets.BACKEND_PORT }}
+            mongodb_uris=${{ secrets.MONGODB_URIS }}
+            mongodb_replica_set=${{ secrets.MONGODB_REPLICA_SET }}
+            mongodb_database=${{ secrets.MONGODB_DATABASE }}
+            aes_key=${{ secrets.AES_KEY }}
           stackname: '${{ secrets.PORTAINER_STACK_NAME }}'
-          docker_compose_path: 'docker-compose.yaml'
+          docker_compose_path: './deployment/docker-compose.yaml'

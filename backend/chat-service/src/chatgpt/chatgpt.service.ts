@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 import { get, isEmpty } from 'lodash';
 import { Observable } from 'rxjs';
 import { CustomLoggerService } from 'src/logger/logger.service';
-import axios from 'axios';
 import OpenAI from 'openai';
 import { generateUniqueKey } from 'src/utils';
 import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto';
@@ -17,22 +16,18 @@ export class ChatgptService {
     private readonly logger: CustomLoggerService,
   ) {}
 
-  async validateOpenAIAPIKey(requestId: string, openAIAPIKey: string): Promise<boolean> {
-    this.logger.log(`[${requestId}] -- Validate openAIAPIKey`);
+  async loadAvailableModels(requestId: string, openAIAPIKey: string): Promise<any> {
+    this.logger.log(`[${requestId}] -- Load available models`);
     try {
-      await axios({
-        method: 'get',
-        url: 'https://api.openai.com/v1/models',
-        headers: {
-          Authorization: `Bearer ${openAIAPIKey}`,
-        },
-      });
-      return true;
-    } catch (ex) {
-      this.logger.error(`[${requestId}] -- Invalid API key`);
+      const openAI = new OpenAI({ apiKey: openAIAPIKey });
+      const models = await openAI.models.list();
+
+      return models;
+    } catch (error) {
+      this.logger.error(`[${requestId}] -- Error loading models`);
 
       throw new HttpException(
-        get(ex, 'response.data.error.message', 'Invalid API key'),
+        get(error, 'response.data.error.message', 'Invalid API key or error loading models'),
         HttpStatus.UNAUTHORIZED,
       );
     }

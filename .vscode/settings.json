@@ -21,6 +21,7 @@
         "**/Thumbs.db": true,
         "**/node_modules": false
     },
+    "prettier.configPath": ".prettierrc",
     "restoreTerminals.terminals": [
         {
             "splitTerminals": [

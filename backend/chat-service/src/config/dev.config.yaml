@@ -14,7 +14,7 @@ mongodb:
   options:
     noDelay: true
     retryAttempts: 5
-    directConnection: true
+    directConnection: false
 
 chatgpt:
   systemMessage: 'You are an AI that is playing the role of a 10 years experience software engineer.'
@@ -24,3 +24,6 @@ chatgpt:
   completionParams:
     model: 'gpt-3.5-turbo-0613'
     temperature: 0.9
+
+user:
+  usageLimit: 5

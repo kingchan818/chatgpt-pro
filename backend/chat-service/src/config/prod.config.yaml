@@ -1,4 +1,4 @@
-name: 'chatgpt-chat-service'
+name: 'chatgpt-chat-service-prod'
 
 http:
   host: 'localhost'
@@ -6,7 +6,8 @@ http:
   cors:
     origin: 'http://react-app:3000'
 
-aes-key: 'chatgpt-chat-service'
+encryption:
+  key: 'replace-me-with-aes-key'
 
 mongodb:
   uris: 'mongodb://mongo:27017'
@@ -14,7 +15,7 @@ mongodb:
   options:
     noDelay: true
     retryAttempts: 5
-    directConnection: true
+    directConnection: false
 
 chatgpt:
   systemMessage: 'You are an AI that is playing the role of a 10 years experience software engineer.'
@@ -23,4 +24,4 @@ chatgpt:
   timeoutMs: 160000
   completionParams:
     model: 'gpt-3.5-turbo-0613'
-    temperature: 0.9
+    temperature: 0.5

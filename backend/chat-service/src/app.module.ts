@@ -14,6 +14,7 @@ import { RequestInterceptor } from './request/request.interceptor';
 import { TransactionModule } from './transaction/transaction.module';
 import { UserModule } from './user/user.module';
 import { ChatgptModule } from './chatgpt/chatgpt.module';
+import { ApiKeyModule } from './api-key/api-key.module';
 
 @Module({
   imports: [
@@ -41,6 +42,7 @@ import { ChatgptModule } from './chatgpt/chatgpt.module';
     ChatModule,
     TransactionModule,
     ChatgptModule,
+    ApiKeyModule,
   ],
   controllers: [AppController],
   providers: [
