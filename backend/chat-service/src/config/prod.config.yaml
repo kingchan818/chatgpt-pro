@@ -12,6 +12,7 @@ encryption:
 mongodb:
   uris: 'mongodb://mongo:27017'
   database: 'chatgpt-pro'
+  replicaSet: 'rs0'
   options:
     noDelay: true
     retryAttempts: 5

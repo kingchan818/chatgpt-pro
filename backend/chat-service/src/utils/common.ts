@@ -1,4 +1,4 @@
-import { cloneDeep } from 'lodash';
+import { cloneDeep, isEmpty, isUndefined } from 'lodash';
 import { ClientSession, Connection } from 'mongoose';
 import { v4 as uuidV4 } from 'uuid';
 
@@ -24,6 +24,19 @@ export function maskSensitiveRequestBody(body: any, sensitiveFields: string[]) {
 export function inspectData(data: any, sensitiveFields: string[] = []) {
   const maskField = ['password', 'apiKey', 'openAIAPIKey', ...sensitiveFields];
   return JSON.stringify(maskSensitiveRequestBody(data, maskField), null, 2);
+}
+
+export function cleanConfig(config) {
+  return Object.entries(config).reduce((acc, [key, value]) => {
+    if (typeof value === 'object' && value !== null) {
+      // Recursively clean nested objects
+      value = cleanConfig(value);
+    }
+    if (!isUndefined(value) && !isEmpty(value)) {
+      acc[key] = value;
+    }
+    return acc;
+  }, {});
 }
 
 export const sessionTransaction = async <T>(connection: Connection, cb: (session: ClientSession) => Promise<T>): Promise<T> => {

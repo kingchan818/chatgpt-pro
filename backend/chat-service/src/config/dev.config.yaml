@@ -6,11 +6,13 @@ http:
   cors:
     origin: '*' # or 'http://localhost:3000'
 
-aes-key: 'chatgpt-chat-service'
+encryption:
+  key: 'replace-me-with-aes-key'
 
 mongodb:
   uris: 'mongodb://mongo:27017'
   database: 'chatgpt-pro'
+  replicaSet: 'rs0'
   options:
     noDelay: true
     retryAttempts: 5
