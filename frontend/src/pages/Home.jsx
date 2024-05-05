@@ -44,9 +44,9 @@ export default function Home() {
       <MainContent isOpen={rightSideBarToggled}>
         {/* Your main content goes here */}
 
-        <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
+        {/* <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
           {rightSideBarToggled ? <MdOutlineKeyboardArrowLeft size={30} /> : <MdKeyboardArrowRight size={30} />}
-        </ToggleLeftSideBarBtn>
+        </ToggleLeftSideBarBtn> */}
 
         <StyledHome>
           <Nav leftSideBarToggled={leftSideBarToggled} setLeftSideBarToggle={setLeftSideBarToggle} />
