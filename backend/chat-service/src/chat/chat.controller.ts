@@ -95,7 +95,7 @@ export class ChatController {
         content: transaction.message,
       })),
       collectionId,
-      model: get(foundTransactions, '0.llmType'),
+      model: get(foundTransactions, `${foundTransactions.length - 1}.llmType`),
     });
 
     this.chatService.handleSEESubscription(req, chatCompletion$);
