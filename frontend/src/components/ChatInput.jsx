@@ -31,7 +31,7 @@ function ChatInput() {
   }
 
   return (
-    <div className="flex items-center justify-center mx-4">
+    <div className="flex items-center justify-center mx-4 sticky bottom-0">
       <InputStyle className="sm:w-full md:w-[40rem] xl:w-[60rem] w-[50rem]">
         <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
         {/* keep button on the button */}

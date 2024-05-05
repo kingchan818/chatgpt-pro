@@ -64,6 +64,8 @@ const StyledHome = styled.div`
   justify-content: space-between;
   height: 100vh;
   width: 100%;
+  overflow: auto;
+  position: relative;
 `;
 
 const MainContent = styled.div`

@@ -37,7 +37,7 @@ export default function Nav(props) {
   const dispatch = useDispatch();
 
   return (
-    <div className="flex bg-[#343541] text-white justify-between items-center px-3 py-3">
+    <div className="flex bg-[#343541] text-white justify-between items-center px-3 py-3 sticky top-0">
       <DropDownList
         className={`flex items-center cursor-pointer font-medium rounded-md p-2 hover:bg-black/10 ${toggleDropDownList ? 'bg-black/10' : ''} z-30`}
         onClick={() => setToggleDropDownList(!toggleDropDownList)}

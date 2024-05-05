@@ -12,16 +12,15 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
     let requestData;
 
     let { currentCollectionId: collectionId } = thunkAPI.getState().chat;
+    const { modelConfigurator } = thunkAPI.getState();
+    const chatOptions = transformHelper(modelConfigurator, MAPPING_CONFIGS.TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS);
 
     if (isEmpty(collectionId) || isNil(collectionId)) {
-      const { modelConfigurator } = thunkAPI.getState();
-      const chatOptions = transformHelper(modelConfigurator, MAPPING_CONFIGS.TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS);
-
       url = ENDPOINTS.CREATE_CHAT_ENDPOINT;
       requestData = omitBy({ message, chatOptions }, isEmpty);
     } else {
       url = ENDPOINTS.CONTINUE_CHAT_ENDPOINT;
-      requestData = { message, collectionId };
+      requestData = { message, collectionId, chatOptions  };
     }
 
     const response = await axios({
@@ -39,7 +38,8 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
       thunkAPI.dispatch(setCollectionId(get(response, 'data.1.collectionId')));
       data = get(response, 'data.1', {});
     } else {
-      data = get(response, 'data', {});
+      data = get(response, 'data.0', {});
+
     }
 
     collectionId = thunkAPI.getState().chat.currentCollectionId;
