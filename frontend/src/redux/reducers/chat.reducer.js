@@ -1,74 +1,60 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import axios from 'axios';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
-import { isEmpty, get, omitBy, isUndefined, isNil } from 'lodash';
+import { isEmpty, get, isNil } from 'lodash';
 import { transformHelper } from '../../utils';
 import { MAPPING_CONFIGS, ENDPOINTS } from '../../domain';
+import { continueChat, createChat } from '../../services/api/chat-completion';
+
+const createSSERequest = async (collectionId, thunkAPI) => {
+  await fetchEventSource(`${ENDPOINTS.CHAT_SSE_ENDPOINT}/${collectionId}`, {
+    headers: {
+      'x-auth-key': localStorage.getItem('apiKey'),
+    },
+    onmessage(event) {
+      const { data: streamMsg } = event;
+      let res;
+      if (!isEmpty(streamMsg)) {
+        res = JSON.parse(streamMsg);
+      }
+
+      if (res && res.message) {
+        res = transformHelper(res, MAPPING_CONFIGS.TRANSFORM_SAVED_MESSAGE_CONFIG);
+        thunkAPI.dispatch(setStreamMsg(res));
+      }
+
+      return res;
+    },
+
+    onerror(event) {
+      return event?.target?.close();
+    },
+
+    onclose(event) {
+      return event?.target?.close();
+    }
+  });
+}
 
 export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async ({ message }, thunkAPI) => {
   try {
-    // TODO: create a axios service, that encapsulates the axios config
-    let url;
-    let requestData;
 
     let { currentCollectionId: collectionId } = thunkAPI.getState().chat;
     const { modelConfigurator } = thunkAPI.getState();
     const chatOptions = transformHelper(modelConfigurator, MAPPING_CONFIGS.TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS);
+    let data = {};
 
     if (isEmpty(collectionId) || isNil(collectionId)) {
-      url = ENDPOINTS.CREATE_CHAT_ENDPOINT;
-      requestData = omitBy({ message, chatOptions }, isEmpty);
+      data = await createChat(message, chatOptions);
+      thunkAPI.dispatch(setCollectionId(get(data, 'collectionId')));
     } else {
-      url = ENDPOINTS.CONTINUE_CHAT_ENDPOINT;
-      requestData = { message, collectionId, chatOptions  };
-    }
-
-    const response = await axios({
-      method: 'post',
-      url,
-      headers: {
-        'Content-Type': 'application/json',
-        'x-auth-key': localStorage.getItem('apiKey'),
-      },
-      data: omitBy(requestData, isUndefined),
-    });
-
-    let data = {};
-    if (url === ENDPOINTS.CREATE_CHAT_ENDPOINT) {
-      thunkAPI.dispatch(setCollectionId(get(response, 'data.1.collectionId')));
-      data = get(response, 'data.1', {});
-    } else {
-      data = get(response, 'data.0', {});
-
+      data = await continueChat(message, collectionId, chatOptions);
     }
 
     collectionId = thunkAPI.getState().chat.currentCollectionId;
     const transformMessage = transformHelper(data, MAPPING_CONFIGS.TRANSFORM_USER_INPUT_CONFIG);
     // push the saved message that comes from backend
     thunkAPI.dispatch(pushMessage(transformMessage));
-
-    await fetchEventSource(`${ENDPOINTS.CHAT_SSE_ENDPOINT}/${collectionId}`, {
-      headers: {
-        'x-auth-key': localStorage.getItem('apiKey'),
-      },
-      onmessage(event) {
-        const { data: streamMsg } = event;
-        let res;
-        if (!isEmpty(streamMsg)) {
-          res = JSON.parse(streamMsg);
-        }
-
-        if (res && res.message) {
-          res = transformHelper(res, MAPPING_CONFIGS.TRANSFORM_SAVED_MESSAGE_CONFIG);
-          thunkAPI.dispatch(setStreamMsg(res));
-        }
-
-        return res;
-      },
-      onerror(event) {
-        return event?.target?.close();
-      },
-    });
+    await createSSERequest(collectionId, thunkAPI);
 
     return data;
   } catch (e) {
