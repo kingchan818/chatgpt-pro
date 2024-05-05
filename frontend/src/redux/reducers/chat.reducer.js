@@ -58,6 +58,9 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
 
     return data;
   } catch (e) {
+    if (e.response?.data) {
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
     return thunkAPI.rejectWithValue(e);
   }
 });
