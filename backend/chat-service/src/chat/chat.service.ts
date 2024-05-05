@@ -49,7 +49,7 @@ export class ChatService {
     let chatCompletionObject: CreateTransactionDto;
     let chatCompletionObjectString: string;
 
-    chatCompletion$.subscribe({
+    const subscription = chatCompletion$.subscribe({
       next: (objStr: string) => {
         chatCompletionObjectString = objStr;
       },
@@ -78,6 +78,12 @@ export class ChatService {
           await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD }, session);
         });
       },
+    });
+
+    req.on('close', () => {
+      if (chatCompletion$) {
+        subscription.unsubscribe();
+      }
     });
   }
 }
