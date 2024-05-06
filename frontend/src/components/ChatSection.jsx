@@ -31,7 +31,7 @@ ChatSection.defaultProps = {
 
 export default function ChatSection({ width, messages = [], isProcessing, streamMessage }) {
   return (
-    <div className=" flex items-center justify-center mx-6">
+    <div className={`flex items-center justify-center mx-6 ${!isEmpty(messages) && 'flex-grow' } mt-3`}>
       <div
         className={`flex flex-col h-full ${isEmpty(messages) ? 'items-center justify-center' : ''} `}
       >

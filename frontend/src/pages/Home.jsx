@@ -41,40 +41,23 @@ export default function Home() {
     <div>
       <Toaster />
       <SideBar chats={chats} ref={sideBarRef} isOpen={rightSideBarToggled} />
-      <MainContent isOpen={rightSideBarToggled}>
-        {/* Your main content goes here */}
+      <div className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'} overflow-hidden`}>
 
         {/* <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
           {rightSideBarToggled ? <MdOutlineKeyboardArrowLeft size={30} /> : <MdKeyboardArrowRight size={30} />}
         </ToggleLeftSideBarBtn> */}
 
-        <StyledHome>
+        <div className={`flex flex-col ${ isEmpty(messages) ? "justify-between" : '' } h-screen w-full overflow-auto relative`}>
           <Nav leftSideBarToggled={leftSideBarToggled} setLeftSideBarToggle={setLeftSideBarToggle} />
           <ChatSection messages={messages} isProcessing={isProcessing} streamMessage={streamMessage} />
           <ChatInput />
-        </StyledHome>
-      </MainContent>
+        </div>
+
+      </div>
     </div>
   );
 }
 
-const StyledHome = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 100vh;
-  width: 100%;
-  overflow: auto;
-  position: relative;
-`;
-
-const MainContent = styled.div`
-  position: relative;
-  transition: margin-left 0.5s;
-  background: #343541;
-  color: #000;
-  margin-left: ${(props) => (props.isOpen ? '250px' : '0')};
-`;
 
 const ToggleLeftSideBarBtn = styled.div`
   position: absolute;
