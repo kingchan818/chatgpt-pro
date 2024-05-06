@@ -1,3 +1,4 @@
+import { List } from 'immutable'
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { isEmpty, get, isNil } from 'lodash';
@@ -6,6 +7,8 @@ import { MAPPING_CONFIGS, ENDPOINTS } from '../../domain';
 import { continueChat, createChat } from '../../services/api/chat-completion';
 
 const createSSERequest = async (collectionId, thunkAPI) => {
+  const ctrl = new AbortController();
+
   await fetchEventSource(`${ENDPOINTS.CHAT_SSE_ENDPOINT}/${collectionId}`, {
     headers: {
       'x-auth-key': localStorage.getItem('apiKey'),
@@ -24,15 +27,16 @@ const createSSERequest = async (collectionId, thunkAPI) => {
 
       return res;
     },
-
-    onerror(event) {
-      return event?.target?.close();
+    signal: ctrl.signal,
+    onerror() {
+      ctrl.abort();
     },
 
     onclose(event) {
-      return event?.target?.close();
+      ctrl.abort();
     }
   });
+
 }
 
 export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async ({ message }, thunkAPI) => {
