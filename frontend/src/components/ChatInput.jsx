@@ -18,6 +18,7 @@ function ChatInput() {
     if (input === '') {
       textareaRef.current.style.height = '44px';
     }
+
   }, [input]);
 
   const handleChange = (event) => {
@@ -25,22 +26,33 @@ function ChatInput() {
   };
 
   const submitMessage = () => {
-    if(isEmpty(input)) return;
+    if(isEmpty(input) && isProcessing) return;
+
     dispatch(handleSSEMessage({ message: input }));
     setInputMsg('');
+  }
+
+  const handleKeyDown = (event) => {
+    // TODO: making key down as a config that can config by user
+
+    if (event.key === 'Enter' && !event.shiftKey) {
+      event.preventDefault();
+      submitMessage();
+    }
   }
 
   return (
     <div className="flex items-center justify-center mx-4 sticky bottom-0">
       <InputStyle className="sm:w-full md:w-[40rem] xl:w-[60rem] w-[50rem]">
-        <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} />
+        <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} onKeyDown={handleKeyDown}/>
         {/* keep button on the button */}
         <button
           type="button"
           className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
-            !isEmpty(input) ? 'bg-white cursor-pointer' : 'input-button-opacity'
+            !isEmpty(input) && !isProcessing ? 'bg-white cursor-pointer' : 'input-button-opacity'
           } flex items-center`}
           onClick={submitMessage}
+          disabled={isEmpty(input) || isProcessing}
         >
           {isProcessing ? (
             <svg
