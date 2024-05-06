@@ -19,7 +19,7 @@ mongodb:
     directConnection: false
 
 chatgpt:
-  systemMessage: 'You are an AI that is playing the role of a 10 years experience software engineer.'
+  systemMessage: 'You are an AI that is playing the role of a 10 years experience software engineer. your response must be robust, need to step by step guide the user to solve the problem and the output should be in a readme format.'
   debug: false
   systemMessageDelay: 1000
   timeoutMs: 160000

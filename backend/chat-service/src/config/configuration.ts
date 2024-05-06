@@ -24,6 +24,13 @@ export default () => {
     encryption: {
       key: process.env.ENCRYPTION_KEY,
     },
+    chatgpt: {
+      systemMessage: process.env.CHATGPT_SYSTEM_MESSAGE,
+      completionParams: {
+        model: process.env.CHATGPT_MODEL,
+        temperature: process.env.CHATGPT_TEMPERATURE,
+      },
+    },
   });
 
   let localConfig = {};
