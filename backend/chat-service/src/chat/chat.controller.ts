@@ -37,31 +37,40 @@ export class ChatController {
       model: gptModelType,
     });
 
-    const collectionId = generateUniqueKey();
-    const sessionResult = await this.transactionService.create(requestId, [
-      {
-        messageId: generateUniqueKey(),
-        collectionId,
-        role: 'system',
-        apiTokenRef: currentUser.userApiKey,
-        message: body.chatOptions?.systemMessage || this.configService.get('chatgpt.systemMessage'),
-        chatOptions: body.chatOptions,
-        tokenUsage: { usedTokens, usedUSD },
-        llmType: gptModelType,
-      },
-      {
-        messageId: generateUniqueKey(),
-        collectionId,
-        role: 'user',
-        apiTokenRef: currentUser.userApiKey,
-        message: body.message,
-        chatOptions: body.chatOptions,
-        tokenUsage: { usedTokens, usedUSD },
-        llmType: gptModelType,
-      },
-    ]);
-    await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD });
-    return sessionResult;
+    const result = await sessionTransaction(this.connection, async (session) => {
+      // create system message and user message
+      const collectionId = generateUniqueKey();
+      const sessionResult = await this.transactionService.create(
+        requestId,
+        [
+          {
+            messageId: generateUniqueKey(),
+            collectionId,
+            role: 'system',
+            apiTokenRef: currentUser.userApiKey,
+            message: body.chatOptions?.systemMessage || this.configService.get('chatgpt.systemMessage'),
+            chatOptions: body.chatOptions,
+            tokenUsage: { usedTokens, usedUSD },
+            llmType: gptModelType,
+          },
+          {
+            messageId: generateUniqueKey(),
+            collectionId,
+            role: 'user',
+            apiTokenRef: currentUser.userApiKey,
+            message: body.message,
+            chatOptions: body.chatOptions,
+            tokenUsage: { usedTokens, usedUSD },
+            llmType: gptModelType,
+          },
+        ],
+        session,
+      );
+      await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD }, session);
+      return sessionResult;
+    });
+
+    return result;
   }
 
   @Sse('sse/:collectionId')
