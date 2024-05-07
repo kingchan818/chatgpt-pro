@@ -67,9 +67,9 @@ export class ChatgptService {
           };
 
           let msg = '';
-
           for await (const chunk of completion) {
             if (subscriber.closed) {
+              // when user unsubscribes
               break;
             }
 

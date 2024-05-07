@@ -15,9 +15,11 @@ import { TransactionModule } from './transaction/transaction.module';
 import { UserModule } from './user/user.module';
 import { ChatgptModule } from './chatgpt/chatgpt.module';
 import { ApiKeyModule } from './api-key/api-key.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
 
 @Module({
   imports: [
+    EventEmitterModule.forRoot(),
     ConfigModule.forRoot({ load: [configuration] }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],

@@ -1,4 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import { InjectConnection } from '@nestjs/mongoose';
 import { HttpStatusCode } from 'axios';
 import { GPTTokens, supportModelType } from 'gpt-tokens';
@@ -17,6 +18,7 @@ export class ChatService {
     private readonly logger: CustomLoggerService,
     private readonly transactionService: TransactionService,
     private readonly apiKeyService: ApiKeyService,
+    private readonly eventEmitter: EventEmitter2,
     @InjectConnection() private readonly connection: Connection,
   ) {}
 
@@ -48,42 +50,51 @@ export class ChatService {
 
     let chatCompletionObject: CreateTransactionDto;
     let chatCompletionObjectString: string;
+    this.logger.log(`[${requestId}] -- Handle SSE subscription`);
 
-    const subscription = chatCompletion$.subscribe({
+    chatCompletion$.subscribe({
       next: (objStr: string) => {
         chatCompletionObjectString = objStr;
       },
       error: (err) => {
-        console.error('Error:', err);
+        this.logger.error('Error:', err);
       },
       complete: async () => {
+        this.logger.log(`[${requestId}] -- SSE subscription completed`);
         chatCompletionObject = JSON.parse(chatCompletionObjectString);
 
         if (!chatCompletionObject) {
           throw new HttpException('There is no subscriptions from openAI', HttpStatusCode.NotFound);
         }
 
-        const { usedTokens, usedUSD } = this.calculateToken(requestId, {
-          model: chatCompletionObject?.llmType as any,
-          assistantMessage: chatCompletionObject.message,
-        });
-
-        await sessionTransaction(this.connection, async (session: any) => {
-          await this.transactionService.create(requestId, {
-            ...chatCompletionObject,
-            apiTokenRef: currentUser.userApiKey,
-            tokenUsage: { usedTokens, usedUSD },
-          });
-
-          await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD }, session);
+        this.eventEmitter.emit('chatgpt.sse.finished', {
+          requestId,
+          currentUser,
+          chatCompletionObject,
         });
       },
     });
+  }
 
-    req.on('close', () => {
-      if (chatCompletion$) {
-        subscription.unsubscribe();
-      }
+  @OnEvent('chatgpt.sse.finished')
+  async handleSSESubscriptionOnFinished(params: { requestId: string; currentUser: any; chatCompletionObject: any }) {
+    const { requestId, currentUser, chatCompletionObject } = params;
+    this.logger.log(`[${requestId}] >>>>>>>>>>>>> Update SSE transaction [START]`);
+
+    const { usedTokens, usedUSD } = this.calculateToken(requestId, {
+      model: chatCompletionObject?.llmType as any,
+      assistantMessage: chatCompletionObject.message,
     });
+
+    await sessionTransaction(this.connection, async (session: any) => {
+      await this.transactionService.create(requestId, {
+        ...chatCompletionObject,
+        apiTokenRef: currentUser.userApiKey,
+        tokenUsage: { usedTokens, usedUSD },
+      });
+
+      await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD }, session);
+    });
+    this.logger.log(`[${requestId}] >>>>>>>>>>>>> Update SSE transaction [ END ]`);
   }
 }
