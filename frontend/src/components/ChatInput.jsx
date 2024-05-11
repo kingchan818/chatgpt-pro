@@ -26,7 +26,7 @@ function ChatInput() {
   };
 
   const submitMessage = () => {
-    if(isEmpty(input) && isProcessing) return;
+    if(isProcessing || isEmpty(input)) return;
 
     dispatch(handleSSEMessage({ message: input }));
     setInputMsg('');
