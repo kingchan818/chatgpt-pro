@@ -38,7 +38,7 @@ export default function Home() {
   }, [error]);
 
   return (
-    <div>
+    <div className='light:bg-[#343541] dark:bg-black'>
       <Toaster />
       <SideBar chats={chats} ref={sideBarRef} isOpen={rightSideBarToggled} />
       <div className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'} overflow-hidden`}>

@@ -37,10 +37,10 @@ export default function ChatSection({ width, messages = [], isProcessing, stream
       >
         {messages && isEmpty(messages) && (
           <>
-            <div className="bg-white rounded-full p-3 mb-2">
+            <div className="dark:bg-white rounded-full p-3 mb-2 border-2 border-black">
               <ChatGPTSvg width={51} height={51} />
             </div>
-            <div className="font-medium text-white text-2xl">How can I help you today?</div>
+            <div className="font-medium text-2xl dark:text-white">How can I help you today?</div>
           </>
         )}
 

@@ -4,9 +4,11 @@ import { LuPanelLeftOpen, LuPanelRightOpen } from 'react-icons/lu';
 import { RiArrowDropDownLine } from 'react-icons/ri';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
+import { Button } from "@/components/ui/button"
 import { setCurrentModel } from '../redux/reducers/modelConfigurator.reducer';
 import InputBox from './InputBox';
 import { createIcon } from '../utils';
+import { useTheme } from './theme-provider';
 
 Nav.propTypes = {
   setLeftSideBarToggle: PropTypes.func.isRequired,
@@ -35,21 +37,22 @@ export default function Nav(props) {
   const [toggleDropDownList, setToggleDropDownList] = useState(false);
   const { currentModel, models } = useSelector((state) => state.modelConfigurator);
   const dispatch = useDispatch();
+  const {setTheme, theme} = useTheme()
 
   return (
-    <div className="flex bg-[#343541] text-white justify-between items-center px-3 py-3 sticky top-0">
+    <div className="flex dark:text-white justify-between items-center px-3 py-3 sticky top-0 bg-white dark:bg-black">
       <DropDownList
         className={`flex items-center cursor-pointer font-medium rounded-md p-2 hover:bg-black/10 ${toggleDropDownList ? 'bg-black/10' : ''} z-30`}
         onClick={() => setToggleDropDownList(!toggleDropDownList)}
       >
         <div className="flex items-center">
           <div>
-            ChatGPT <span className="text-white/50">{currentModel.name}</span>
+            ChatGPT <span className="dark:text-white/50 text-black/50">{currentModel.name}</span>
           </div>
           <RiArrowDropDownLine size={20} />
         </div>
         {toggleDropDownList && (
-          <div className="content mt-2 min-w-[340px] max-w-xs overflow-hidden rounded-lg border border-gray-100 bg-token-surface-primary shadow-lg dark:border-gray-700 bg-[#202123]">
+          <div className="content mt-2 min-w-[340px] max-w-xs overflow-hidden rounded-lg border border-gray-100 bg-token-surface-primary shadow-lg dark:border-gray-700 bg-white dark:bg-[#202123]">
             {models.map((model) => {
               const ReactIcon = createIcon(model.icon);
               return (
@@ -73,7 +76,9 @@ export default function Nav(props) {
           </div>
         )}
       </DropDownList>
-      <MenuIcon sideBarToggled={leftSideBarToggled} setFn={setLeftSideBarToggle} />
+      <Button onClick={() => {
+        setTheme(theme === 'dark' ? 'light' : 'dark')
+      }} >{theme === 'dark' ?  'toggle white mode' : 'toggle dark mode'}</Button>
     </div>
   );
 }

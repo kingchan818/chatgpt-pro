@@ -2,9 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
-  background: #343541;
-}
 
 
 /* Works on Chrome, Edge, and Safari */

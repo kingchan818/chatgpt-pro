@@ -64,7 +64,7 @@ function Markdown({ content }) {
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm, rehypeHighlight]}
-      className="text-white/70 font-extralight leading-loose"
+      className="dark:text-white/70 text-black font-extralight leading-loose"
     >
       {content}
     </ReactMarkdown>

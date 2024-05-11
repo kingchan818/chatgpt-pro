@@ -44,12 +44,12 @@ function ChatInput() {
   return (
     <div className="flex items-center justify-center mx-4 sticky bottom-0">
       <InputStyle className="sm:w-full md:w-[40rem] xl:w-[60rem] w-[50rem]">
-        <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} onKeyDown={handleKeyDown}/>
+        <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} onKeyDown={handleKeyDown} className='dark:bg-black dark:text-white dark:caret-white'/>
         {/* keep button on the button */}
         <button
           type="button"
           className={`absolute bottom-[10px] right-5 py-1 px-1 rounded-md ${
-            !isEmpty(input) && !isProcessing ? 'bg-white cursor-pointer' : 'input-button-opacity'
+            !isEmpty(input) && !isProcessing ? 'bg-white cursor-pointer' : 'bg-[#acacbe]/20'
           } flex items-center`}
           onClick={submitMessage}
           disabled={isEmpty(input) || isProcessing}
@@ -102,14 +102,11 @@ const InputStyle = styled.div`
     width: 100%;
     height: 44px;
     padding: 10px 40px 10px 12px;
-    background: #343541;
     resize: none;
     outline: none;
     display: flex;
-    color: white; // This will change the font color to white
-    caret-color: white; // This will change the input cursor color to white
     max-height: 200px;
-    border: 0.5px solid rgba(217, 217, 227, 0.2);
+    border: 2px solid rgba(217, 217, 227, 0.5);
     border-radius: 10px;
     padding: 10px 40px 10px 12px;
   }
