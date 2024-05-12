@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { AiOutlineRobot } from 'react-icons/ai';
 import { FiEdit2 } from 'react-icons/fi';
 import { IoReloadOutline } from 'react-icons/io5';
@@ -44,4 +44,4 @@ function Message({ role, text, messages, messageIdx }) {
   );
 }
 
-export default Message;
+export default memo(Message);

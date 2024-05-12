@@ -1,16 +1,13 @@
-import React from 'react';
+import React, { memo } from 'react';
 import PropTypes from 'prop-types';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import { oneDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
-import ReactSyntaxHighlighter from 'react-syntax-highlighter';
 
 import SyntaxHighlighter from './SyntaxHighlighter';
 
-Markdown.propTypes = {
-  content: PropTypes.string.isRequired,
-};
+
 
 const components = {
   code: SyntaxHighlighter,
@@ -59,8 +56,7 @@ const components = {
   tr: ({ children }) => <tr className="border border-white">{children}</tr>,
 };
 
-function Markdown({ content }) {
-  return (
+const Markdown = memo(({ content }) => (
     <ReactMarkdown
       components={components}
       remarkPlugins={[remarkGfm, rehypeHighlight]}
@@ -68,7 +64,10 @@ function Markdown({ content }) {
     >
       {content}
     </ReactMarkdown>
-  );
-}
+  ))
+
+Markdown.propTypes = {
+    content: PropTypes.string.isRequired,
+};
 
 export default Markdown;

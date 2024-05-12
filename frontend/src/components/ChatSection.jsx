@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 
 import Message from './Message';
 import { ReactComponent as ChatGPTSvg } from '../assets/chatgpt-24.svg';
@@ -29,7 +29,8 @@ ChatSection.defaultProps = {
   width: '100%',
 };
 
-export default function ChatSection({ width, messages = [], isProcessing, streamMessage }) {
+function ChatSection({ width, messages = [], isProcessing, streamMessage }) {
+
   return (
     <div className={`flex items-center justify-center mx-6 ${(!isEmpty(messages) || isProcessing && isEmpty(messages) ) && 'flex-grow' } mt-3`}>
       <div
@@ -62,3 +63,5 @@ export default function ChatSection({ width, messages = [], isProcessing, stream
     </div>
   );
 }
+
+export default memo(ChatSection);

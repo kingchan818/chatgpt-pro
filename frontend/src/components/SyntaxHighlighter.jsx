@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { memo, useState } from 'react';
 import { get } from 'lodash';
 import ReactSyntaxHighlighter from 'react-syntax-highlighter';
 import { FaRegCopy } from 'react-icons/fa';
@@ -67,4 +67,4 @@ function SyntaxHighlighter({ node, inline, className, children, ...props }) {
     </>
   );
 }
-export default SyntaxHighlighter;
+export default memo(SyntaxHighlighter);
