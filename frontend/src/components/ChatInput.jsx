@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useCallback } from 'react';
 import styled from 'styled-components';
 import { FaArrowUp } from 'react-icons/fa6';
 import { isEmpty } from 'lodash';
@@ -25,12 +25,12 @@ function ChatInput() {
     setInputMsg(event.target.value);
   };
 
-  const submitMessage = () => {
+  const submitMessage = useCallback(() => {
     if(isProcessing || isEmpty(input)) return;
 
     dispatch(handleSSEMessage({ message: input }));
     setInputMsg('');
-  }
+  }, [dispatch, input, isProcessing]);
 
   const handleKeyDown = (event) => {
     // TODO: making key down as a config that can config by user
