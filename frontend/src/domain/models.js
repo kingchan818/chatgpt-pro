@@ -10,10 +10,10 @@ const chatgptSelectModels = [
     size: 20,
   },
   {
-    id: 'gpt-4-0125-preview',
-    name: '4 Turbo',
+    id: 'gpt-4o-2024-05-13',
+    name: '4o',
     icon: 'GrActions',
-    description: 'The most fastest chatbot in the world',
+    description: 'The most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo',
     size: 25,
   },
 ];
