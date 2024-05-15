@@ -30,12 +30,6 @@ export class ChatController {
     const { requestId, currentUser } = req;
     const gptModelType = get(body, 'chatOptions.model', this.configService.get('chatgpt.completionParams.model'));
 
-    const { usedTokens, usedUSD } = this.chatService.calculateToken(requestId, {
-      userMessage: body.message,
-      systemMessage: body.chatOptions?.systemMessage || this.configService.get('chatgpt.systemMessage'),
-      model: gptModelType,
-    });
-
     const collectionId = generateUniqueKey();
     const sessionResult = await this.transactionService.create(requestId, [
       {
@@ -45,7 +39,7 @@ export class ChatController {
         apiTokenRef: currentUser.userApiKey,
         message: body.chatOptions?.systemMessage || this.configService.get('chatgpt.systemMessage'),
         chatOptions: body.chatOptions,
-        tokenUsage: { usedTokens, usedUSD },
+        tokenUsage: {},
         llmType: gptModelType,
       },
       {
@@ -55,11 +49,10 @@ export class ChatController {
         apiTokenRef: currentUser.userApiKey,
         message: body.message,
         chatOptions: body.chatOptions,
-        tokenUsage: { usedTokens, usedUSD },
+        tokenUsage: {},
         llmType: gptModelType,
       },
     ]);
-    await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD });
     return sessionResult;
   }
 
@@ -98,23 +91,15 @@ export class ChatController {
     const { requestId, currentUser } = req;
     const gptModelType = get(body, 'chatOptions.model', this.configService.get('chatgpt.completionParams.model'));
 
-    const { usedTokens, usedUSD } = this.chatService.calculateToken(requestId, {
-      userMessage: body.message,
-      systemMessage: body.chatOptions?.systemMessage,
-      model: gptModelType,
-    });
-
     const transactionResult = await this.transactionService.create(requestId, {
       messageId: generateUniqueKey(),
       collectionId: body.collectionId,
       apiTokenRef: currentUser.userApiKey,
       role: 'user',
       message: body.message,
-      tokenUsage: { usedTokens, usedUSD },
+      tokenUsage: {},
       llmType: gptModelType,
     });
-
-    await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD });
 
     return transactionResult;
   }

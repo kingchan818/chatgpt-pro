@@ -55,7 +55,7 @@ export class TransactionService {
     return this.update(messageId, { tokenUsage });
   }
 
-  find(requestId: string, documentFields: Record<string, any>, sortFields?: Record<string, any>) {
+  find(requestId: string, documentFields: Record<string, any>, sortFields?: Record<string, any>, session?: any) {
     this.logger.log(`[${requestId}] -- Find chat transaction by document fields`);
     this.logger.verbose(`[${requestId}] -- Find chat transaction by document fields ${JSON.stringify(documentFields)}`);
     const findFn = this.transactionModel.find(documentFields);
@@ -64,7 +64,7 @@ export class TransactionService {
       findFn.sort(sortFields);
     }
 
-    return findFn.exec();
+    return findFn.session(session).exec();
   }
 
   async constructAllCollectionIdsByCurrentUser(requestId: string, currentUser: any) {

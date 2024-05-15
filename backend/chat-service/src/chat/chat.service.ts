@@ -29,17 +29,26 @@ export class ChatService {
       systemMessage?: string;
       userMessage?: string;
       assistantMessage?: string;
+      collectionMessages?: any[];
     },
   ) {
     this.logger.log(`[${requestId}] -- Calculate chatgpt token`);
 
-    const { model, systemMessage, userMessage, assistantMessage } = params;
+    const { model, systemMessage, userMessage, assistantMessage, collectionMessages } = params;
+    let messages: any = [];
 
-    const messages: any = [
-      { role: 'system', content: systemMessage },
-      { role: 'user', content: userMessage },
-      { role: 'assistant', content: assistantMessage },
-    ].filter((message) => !isEmpty(message.content));
+    if (!isEmpty(collectionMessages)) {
+      messages = collectionMessages.map((message) => ({
+        role: message.role,
+        content: message.message,
+      }));
+    } else {
+      messages = [
+        { role: 'system', content: systemMessage },
+        { role: 'user', content: userMessage },
+        { role: 'assistant', content: assistantMessage },
+      ].filter((message) => !isEmpty(message.content));
+    }
 
     const usage = new GPTTokens({ model, messages });
     return usage;
@@ -81,17 +90,31 @@ export class ChatService {
     const { requestId, currentUser, chatCompletionObject } = params;
     this.logger.log(`[${requestId}] >>>>>>>>>>>>> Update SSE transaction [START]`);
 
-    const { usedTokens, usedUSD } = this.calculateToken(requestId, {
-      model: chatCompletionObject?.llmType as any,
-      assistantMessage: chatCompletionObject.message,
-    });
-
     await sessionTransaction(this.connection, async (session: any) => {
-      await this.transactionService.create(requestId, {
-        ...chatCompletionObject,
-        apiTokenRef: currentUser.userApiKey,
-        tokenUsage: { usedTokens, usedUSD },
+      const messages = await this.transactionService.find(
+        requestId,
+        {
+          collectionId: chatCompletionObject.collectionId,
+          apiTokenRef: currentUser.userApiKey,
+        },
+        { createdDT: 1 },
+        session,
+      );
+
+      const { usedTokens, usedUSD } = this.calculateToken(requestId, {
+        model: chatCompletionObject?.llmType as any,
+        collectionMessages: messages,
       });
+
+      await this.transactionService.create(
+        requestId,
+        {
+          ...chatCompletionObject,
+          apiTokenRef: currentUser.userApiKey,
+          tokenUsage: { usedTokens, usedUSD },
+        },
+        session,
+      );
 
       await this.apiKeyService.updateUsageCount(currentUser.userApiKey, { usageCount: usedUSD }, session);
     });
