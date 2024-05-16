@@ -1,19 +1,9 @@
 import PropTypes from 'prop-types';
-import React, { useState } from 'react';
+import React from 'react';
 import { LuPanelLeftOpen, LuPanelRightOpen } from 'react-icons/lu';
-import { RiArrowDropDownLine } from 'react-icons/ri';
-import styled from 'styled-components';
-import { useDispatch, useSelector } from 'react-redux';
-import { Button } from "@/components/ui/button"
-import { setCurrentModel } from '../redux/reducers/modelConfigurator.reducer';
-import InputBox from './InputBox';
-import { createIcon } from '../utils';
+import { Button } from '@/components/ui/button';
 import { useTheme } from './theme-provider';
-
-Nav.propTypes = {
-  setLeftSideBarToggle: PropTypes.func.isRequired,
-  leftSideBarToggled: PropTypes.bool.isRequired,
-};
+import ModelDropDown from './ModelDropDown';
 
 MenuIcon.propTypes = {
   sideBarToggled: PropTypes.bool.isRequired,
@@ -33,61 +23,18 @@ function MenuIcon({ sideBarToggled, setFn }) {
 }
 
 export default function Nav(props) {
-  const { leftSideBarToggled, setLeftSideBarToggle } = props;
-  const [toggleDropDownList, setToggleDropDownList] = useState(false);
-  const { currentModel, models } = useSelector((state) => state.modelConfigurator);
-  const dispatch = useDispatch();
-  const {setTheme, theme} = useTheme()
+  const { setTheme, theme } = useTheme();
 
   return (
     <div className="flex dark:text-white justify-between items-center px-3 py-3 sticky top-0 bg-white dark:bg-black">
-      <DropDownList
-        className={`flex items-center cursor-pointer font-medium rounded-md p-2 hover:bg-black/10 ${toggleDropDownList ? 'bg-black/10' : ''} z-30`}
-        onClick={() => setToggleDropDownList(!toggleDropDownList)}
+      <ModelDropDown />
+      <Button
+        onClick={() => {
+          setTheme(theme === 'dark' ? 'light' : 'dark');
+        }}
       >
-        <div className="flex items-center">
-          <div>
-            ChatGPT <span className="dark:text-white/50 text-black/50">{currentModel.name}</span>
-          </div>
-          <RiArrowDropDownLine size={20} />
-        </div>
-        {toggleDropDownList && (
-          <div className="content mt-2 min-w-[340px] max-w-xs overflow-hidden rounded-lg border border-gray-100 bg-token-surface-primary shadow-lg dark:border-gray-700 bg-white dark:bg-[#202123]">
-            {models.map((model) => {
-              const ReactIcon = createIcon(model.icon);
-              return (
-                <button
-                  className="flex p-3 justify-between items-center"
-                  type="button"
-                  key={model.id}
-                  onClick={() => dispatch(setCurrentModel(model))}
-                >
-                  <ReactIcon size={model.size} />
-                  <div className="mx-3 text-start">
-                    <div className="text-base">
-                      ChatGPT <span className="text-white/70">{model.name}</span>
-                    </div>
-                    <div className="text-sm text-gray-400">{model.description}</div>
-                  </div>
-                  <InputBox isActive={currentModel.id === model.id} onClick={() => dispatch(setCurrentModel(model))} />
-                </button>
-              );
-            })}
-          </div>
-        )}
-      </DropDownList>
-      <Button onClick={() => {
-        setTheme(theme === 'dark' ? 'light' : 'dark')
-      }} >{theme === 'dark' ?  'toggle white mode' : 'toggle dark mode'}</Button>
+        {theme === 'dark' ? 'toggle white mode' : 'toggle dark mode'}
+      </Button>
     </div>
   );
 }
-
-const DropDownList = styled.div`
-  position: relative;
-  .content {
-    position: absolute;
-    left: 1px;
-    top: 101%;
-  }
-`;

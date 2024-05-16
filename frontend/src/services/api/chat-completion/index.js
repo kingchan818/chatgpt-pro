@@ -15,3 +15,8 @@ export const continueChat = async (message, collectionId, chatOptions) => {
   const { data } = await chatCompletionService.post('continue', requestData, { headers: { 'x-auth-key': localStorage.getItem('apiKey') }});
   return get(data, '0', {});
 };
+
+export const loadModels = async () => {
+  const { data } = await chatCompletionService.get('model', { headers: { 'x-auth-key': localStorage.getItem('apiKey') }});
+  return data
+}
