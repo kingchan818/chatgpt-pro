@@ -50,7 +50,7 @@ export class ChatService {
       ].filter((message) => !isEmpty(message.content));
     }
 
-    const usage = new GPTTokens({ model, messages });
+    const usage = new GPTTokens({ model, messages, debug: true });
     return usage;
   }
 
