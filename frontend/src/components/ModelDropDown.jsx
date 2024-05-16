@@ -73,12 +73,12 @@ function ModelDropDown() {
 
             <DialogContent className="w-2/3">
               <DialogHeader>
-                <DialogTitle>Configure AI Models</DialogTitle>
+                <DialogTitle className="dark:text-white">Configure AI Models</DialogTitle>
                 <DialogClose />
               </DialogHeader>
               <div className="border-2 rounded-md p-3 flex flex-col">
                 {availableModels.map((model) => (
-                  <div key={model.id} className="hover:bg-black/5 rounded-md">
+                  <div key={model.id} className="hover:bg-black/5 rounded-md dark:text-white dark:hover:bg-white/10">
                     <button
                       type="button"
                       className="p-2"
