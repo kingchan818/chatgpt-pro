@@ -1,13 +1,14 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { MdKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { isEmpty, get } from 'lodash';
 import SideBar from '../components/SideBar';
 import Nav from '../components/Nav';
 import ChatSection from '../components/ChatSection';
 import ChatInput from '../components/ChatInput';
+import { loadOpenAIModels } from '../redux/reducers/modelConfigurator.reducer';
 
 export default function Home() {
   // TODO: Better to centralize the state in a context provider
@@ -30,12 +31,20 @@ export default function Home() {
   ];
 
   const { messages, error, isProcessing, streamMessage } = useSelector((state) => state.chat);
+  const { models } = useSelector((state) => state.modelConfigurator);
+
+  const dispatch = useDispatch();
   useEffect(() => {
     if (!isEmpty(error)) {
       const errorMessage = get(error, 'message', 'Oh its a empty message...');
       toast.error(errorMessage);
     }
-  }, [error]);
+
+    if (models && models.length === 0){
+      dispatch(loadOpenAIModels());
+    }
+
+  }, [error, models]);
 
   return (
     <div className='light:bg-[#343541] dark:bg-black'>
@@ -59,15 +68,4 @@ export default function Home() {
 }
 
 
-const ToggleLeftSideBarBtn = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 0;
-  color: rgba(0, 0, 0, 0.5);
-  padding: 8px;
-  cursor: pointer;
-  :hover {
-    color: rgba(255, 255, 255, 0.7);
-    transition: color 0.3s ease-in-out; // Add this line
-  }
-`;
+

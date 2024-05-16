@@ -1,6 +1,6 @@
-import { Body, Controller, HttpException, Param, Post, Req, Sse, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, Param, Post, Req, Sse, UseGuards } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { get, isEmpty } from 'lodash';
+import { filter, get, isEmpty } from 'lodash';
 
 import { ChatgptService } from '../chatgpt/chatgpt.service';
 import { TransactionService } from '../transaction/transaction.service';
@@ -102,5 +102,12 @@ export class ChatController {
     });
 
     return transactionResult;
+  }
+
+  @Get('model')
+  async loadAllAvailableModels(@Req() req: any) {
+    const { requestId, currentUser } = req;
+    const { data } = await this.chatgptService.loadAvailableModels(requestId, currentUser.openAIKey);
+    return filter(data, (model) => model.id.includes('gpt'));
   }
 }
