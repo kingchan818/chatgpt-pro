@@ -39,9 +39,10 @@ export class ChatgptService {
     messages: any[];
     model?: string;
     collectionId: string;
+    temperature?: number;
     [key: string]: any;
   }) {
-    const { requestId, openAIKey, messages, model, collectionId } = params;
+    const { requestId, openAIKey, messages, model, collectionId, temperature } = params;
 
     this.logger.log(`[${requestId}] -- Create chat completion`);
 
@@ -51,6 +52,7 @@ export class ChatgptService {
           const openAI = new OpenAI({ apiKey: openAIKey });
           const completion = await openAI.chat.completions.create({
             messages,
+            temperature,
             model: model || this.configureService.get('chatgpt.completionParams.model'),
             stream: true,
           });

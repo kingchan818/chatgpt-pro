@@ -1,4 +1,4 @@
-import { List } from 'immutable'
+import { List } from 'immutable';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { isEmpty, get, isNil } from 'lodash';
@@ -34,14 +34,12 @@ const createSSERequest = async (collectionId, thunkAPI) => {
 
     onclose(event) {
       ctrl.abort();
-    }
+    },
   });
-
-}
+};
 
 export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async ({ message }, thunkAPI) => {
   try {
-
     let { currentCollectionId: collectionId } = thunkAPI.getState().chat;
     const { modelConfigurator } = thunkAPI.getState();
     const chatOptions = transformHelper(modelConfigurator, MAPPING_CONFIGS.TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS);

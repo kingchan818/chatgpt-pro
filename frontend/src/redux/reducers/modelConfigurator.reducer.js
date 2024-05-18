@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, current } from '@reduxjs/toolkit';
 import { CHATGPT_MODELS } from '../../domain';
 import { loadModels } from '../../services/api/chat-completion';
 
@@ -23,13 +23,20 @@ const modelConfiguratorSlice = createSlice({
   initialState: {
     currentModel: CHATGPT_MODELS[0],
     predefinedModels: CHATGPT_MODELS,
+    modelTemperature: 0.5,
     availableModels: [],
+    // name, and detail
+    systemPrompts: [],
+    currentSystemPrompt: '',
     error: null,
     isProcessing: false,
   },
   reducers: {
     setCurrentModel: (state, action) => ({ ...state, currentModel: action.payload }),
     setAvailableModels: (state, action) => ({ ...state, models: action.payload }),
+    setModelTemperature: (state, action) => ({ ...state, modelTemperature: action.payload }),
+    setCurrentSystemPrompt: (state, action) => ({ ...state, currentSystemPrompt: action.payload }),
+    setSystemPrompts: (state, action) => ({ ...state, systemPrompts: action.payload }),
   },
   extraReducers: (builder) => {
     builder
@@ -42,6 +49,7 @@ const modelConfiguratorSlice = createSlice({
   },
 });
 
-export const { setCurrentModel, setAvailableModels } = modelConfiguratorSlice.actions;
+export const { setCurrentModel, setAvailableModels, setModelTemperature, setCurrentSystemPrompt } =
+  modelConfiguratorSlice.actions;
 
 export default modelConfiguratorSlice.reducer;

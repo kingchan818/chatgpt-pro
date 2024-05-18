@@ -37,7 +37,9 @@ export class ChatController {
         collectionId,
         role: 'system',
         apiTokenRef: currentUser.userApiKey,
-        message: body.chatOptions?.systemMessage || this.configService.get('chatgpt.systemMessage'),
+        message: !isEmpty(body.chatOptions?.systemMessage)
+          ? body.chatOptions.systemMessage
+          : this.configService.get('chatgpt.systemMessage'),
         chatOptions: body.chatOptions,
         tokenUsage: {},
         llmType: gptModelType,
@@ -70,15 +72,18 @@ export class ChatController {
       throw new HttpException('Message not found', HttpStatusCode.NotFound);
     }
 
+    const latestChatTransaction = foundTransactions[foundTransactions.length - 1];
+
     const chatCompletion$ = this.chatgptService.createChatCompletion({
       requestId,
       openAIKey: currentUser.openAIKey,
+      temperature: (latestChatTransaction.chatOptions as any)?.temperature,
       messages: foundTransactions.map((transaction) => ({
         role: transaction.role,
         content: transaction.message,
       })),
       collectionId,
-      model: get(foundTransactions, `${foundTransactions.length - 1}.llmType`),
+      model: latestChatTransaction.llmType,
     });
 
     this.chatService.handleSEESubscription(req, chatCompletion$);
@@ -99,6 +104,7 @@ export class ChatController {
       message: body.message,
       tokenUsage: {},
       llmType: gptModelType,
+      chatOptions: body.chatOptions,
     });
 
     return transactionResult;

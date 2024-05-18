@@ -1,4 +1,4 @@
-const { isEmpty, get } = require('lodash');
+const { isEmpty, get, isNil } = require('lodash');
 
 // NOTE: only support simple object
 const transformHelper = (data, config = []) =>
@@ -6,11 +6,11 @@ const transformHelper = (data, config = []) =>
     const { transformFrom, transformTo, constant } = item;
     const val = get(data, transformFrom);
 
-    if (!isEmpty(val)) {
+    if (!isEmpty(val) || !isNil(val)) {
       acc[transformTo] = val;
     }
 
-    if (!isEmpty(constant)) {
+    if (!isEmpty(constant) || !isNil(constant)) {
       acc[transformTo] = constant;
     }
 

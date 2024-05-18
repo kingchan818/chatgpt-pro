@@ -41,6 +41,14 @@ const TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS = [
     transformFrom: 'currentModel.id',
     transformTo: 'model',
   },
+  {
+    transformFrom: 'modelTemperature',
+    transformTo: 'temperature',
+  },
+  {
+    transformFrom: 'currentSystemPrompt',
+    transformTo: 'systemMessage',
+  },
 ];
 
 export default {

@@ -1,7 +1,7 @@
 // import { GrActions } from 'react-icons/gr';
 // import { RxLightningBolt } from 'react-icons/rx';
 
-const chatgptSelectModels = [
+const chatgptPredefinedModels = [
   {
     id: 'gpt-3.5-turbo-0613',
     name: '3 Turbo',
@@ -14,8 +14,8 @@ const chatgptSelectModels = [
     name: '4o',
     icon: 'GrActions',
     description: 'The most advanced, multimodal flagship model that’s cheaper and faster than GPT-4 Turbo',
-    size: 25,
+    size: 50,
   },
 ];
 
-export default chatgptSelectModels;
+export default chatgptPredefinedModels;

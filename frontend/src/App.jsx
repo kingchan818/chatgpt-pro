@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { isNil, isEmpty } from 'lodash';
-import { Button } from "@/components/ui/button"
 import Home from './pages/Home';
 import Login from './pages/Login';
 import { setCurrentUser } from './redux/reducers/user.reducer';
@@ -20,7 +19,7 @@ function App() {
   }, [dispatch]);
 
   return (
-    <ThemeProvider defaultTheme='system' storageKey="vite-ui-theme">
+    <ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
       <BrowserRouter basename="/">
         <Routes>{isNil(currentUser) ? <Route path="/" Component={Login} /> : <Route path="/" Component={Home} />}</Routes>
       </BrowserRouter>
