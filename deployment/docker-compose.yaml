@@ -11,6 +11,7 @@ services:
       - REACT_APP_BACKEND_PROTOCOL={{backend_protocol}}
       - REACT_APP_BACKEND_HOST={{backend_host}}
       - REACT_APP_BACKEND_PORT={{backend_port}}
+      - NODE_ENV=production
 
   chat-service:
     image: 'kingchan818/chatgpt-pro-chat-service'
