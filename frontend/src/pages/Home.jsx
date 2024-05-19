@@ -30,7 +30,7 @@ export default function Home() {
     { sessionId: 10, name: 'Investment Opportunities' },
   ];
 
-  const { messages, error, isProcessing, streamMessage } = useSelector((state) => state.chat);
+  const { messages, error, isProcessing, streamMessageText, streamMessageInfo } = useSelector((state) => state.chat);
   const { models } = useSelector((state) => state.modelConfigurator);
 
   const dispatch = useDispatch();
@@ -40,32 +40,33 @@ export default function Home() {
       toast.error(errorMessage);
     }
 
-    if (models && models.length === 0){
+    if (models && models.length === 0) {
       dispatch(loadOpenAIModels());
     }
-
   }, [error, models]);
 
   return (
-    <div className='light:bg-[#343541] dark:bg-black'>
+    <div className="light:bg-[#343541] dark:bg-black">
       <Toaster />
       <SideBar chats={chats} ref={sideBarRef} isOpen={rightSideBarToggled} />
-      <div className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'} overflow-hidden`}>
-
+      <div
+        className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'} overflow-hidden`}
+      >
         {/* <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
           {rightSideBarToggled ? <MdOutlineKeyboardArrowLeft size={30} /> : <MdKeyboardArrowRight size={30} />}
         </ToggleLeftSideBarBtn> */}
 
-        <div className={`flex flex-col ${ isEmpty(messages) ? "justify-between" : '' } h-screen w-full overflow-auto relative`}>
+        <div className={`flex flex-col ${isEmpty(messages) ? 'justify-between' : ''} h-screen w-full overflow-auto relative`}>
           <Nav leftSideBarToggled={leftSideBarToggled} setLeftSideBarToggle={setLeftSideBarToggle} />
-          <ChatSection messages={messages} isProcessing={isProcessing} streamMessage={streamMessage} />
+          <ChatSection
+            messages={messages}
+            isProcessing={isProcessing}
+            streamMessageText={streamMessageText}
+            streamMessageInfo={streamMessageInfo}
+          />
           <ChatInput />
         </div>
-
       </div>
     </div>
   );
 }
-
-
-

@@ -18,7 +18,6 @@ function ChatInput() {
     if (input === '') {
       textareaRef.current.style.height = '44px';
     }
-
   }, [input]);
 
   const handleChange = (event) => {
@@ -26,7 +25,7 @@ function ChatInput() {
   };
 
   const submitMessage = useCallback(() => {
-    if(isProcessing || isEmpty(input)) return;
+    if (isProcessing || isEmpty(input)) return;
 
     dispatch(handleSSEMessage({ message: input }));
     setInputMsg('');
@@ -39,12 +38,20 @@ function ChatInput() {
       event.preventDefault();
       submitMessage();
     }
-  }
+  };
 
   return (
     <div className="flex items-center justify-center mx-4 sticky bottom-0">
       <InputStyle className="sm:w-full md:w-[40rem] xl:w-[60rem] w-[50rem]">
-        <textarea ref={textareaRef} value={input} onChange={handleChange} placeholder="Message ChatGPT..." rows={2} onKeyDown={handleKeyDown} className='dark:bg-black dark:text-white dark:caret-white'/>
+        <textarea
+          ref={textareaRef}
+          value={input}
+          onChange={handleChange}
+          placeholder="Message ChatGPT..."
+          rows={2}
+          onKeyDown={handleKeyDown}
+          className="dark:bg-black dark:text-white dark:caret-white"
+        />
         {/* keep button on the button */}
         <button
           type="button"

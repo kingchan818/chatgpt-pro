@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { GrConfigure } from 'react-icons/gr';
 import { useDispatch, useSelector } from 'react-redux';
 import { Label } from '@radix-ui/react-dropdown-menu';
@@ -19,9 +19,19 @@ import {
 import { setCurrentModel, setCurrentSystemPrompt, setModelTemperature } from '@/redux/reducers/modelConfigurator.reducer';
 
 function ModelConfiguratorDialog({ setToggleDropDownList }) {
-  const { currentModel, availableModels, modelTemperature } = useSelector((state) => state.modelConfigurator);
+  const { currentModel, availableModels, modelTemperature, currentSystemPrompt } = useSelector(
+    (state) => state.modelConfigurator,
+  );
   const dispatch = useDispatch();
   const maxSliderSteps = Array.from({ length: 10 }, (_, i) => i + 1);
+
+  useEffect(() => {
+    const existingPrompts = localStorage.getItem('systemPrompts');
+    if (existingPrompts) {
+      const prompts = JSON.parse(existingPrompts);
+      dispatch(setCurrentSystemPrompt(prompts[0]?.details || ''));
+    }
+  }, [dispatch]);
 
   return (
     <Dialog>
@@ -83,6 +93,7 @@ function ModelConfiguratorDialog({ setToggleDropDownList }) {
             placeholder="Try to write something....."
             rows={10}
             onChange={(e) => dispatch(setCurrentSystemPrompt(e.target?.value))}
+            value={currentSystemPrompt}
           />
           <p className="text-xs text-muted-foreground">
             System prompts are used to provide context to the AI model. You can edit the prompt to get different results.

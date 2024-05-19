@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo } from 'react';
 
 import Message from './Message';
 import { ReactComponent as ChatGPTSvg } from '../assets/chatgpt-24.svg';
@@ -29,12 +29,13 @@ ChatSection.defaultProps = {
   width: '100%',
 };
 
-function ChatSection({ width, messages = [], isProcessing, streamMessage }) {
-
+function ChatSection({ width, messages = [], isProcessing, streamMessageText, streamMessageInfo }) {
   return (
-    <div className={`flex items-center justify-center mx-6 ${(!isEmpty(messages) || isProcessing && isEmpty(messages) ) && 'flex-grow' } mt-3`}>
+    <div
+      className={`flex items-center justify-center mx-6 ${(!isEmpty(messages) || (isProcessing && isEmpty(messages))) && 'flex-grow'} mt-3`}
+    >
       <div
-        className={`flex flex-col h-full ${isEmpty(messages) || !isProcessing && isEmpty(messages) ? 'items-center justify-center' : ''} `}
+        className={`flex flex-col h-full ${isEmpty(messages) || (!isProcessing && isEmpty(messages)) ? 'items-center justify-center' : ''} `}
       >
         {messages && isEmpty(messages) && (
           <>
@@ -53,8 +54,8 @@ function ChatSection({ width, messages = [], isProcessing, streamMessage }) {
 
         {isProcessing && (
           <Message
-            role={streamMessage?.role || 'assistant'}
-            text={streamMessage?.text || 'Processing...'}
+            role={streamMessageInfo?.role || 'assistant'}
+            text={streamMessageText || 'Processing...'}
             messages={messages}
             messageIdx={messages.length}
           />
