@@ -9,6 +9,7 @@ services:
       - chat-service
     environment:
       - REACT_APP_BACKEND_PROTOCOL={{backend_protocol}}
+      - REACT_APP_BACKEND_PATH={{backend_path}}
       - REACT_APP_BACKEND_HOST={{backend_host}}
       - REACT_APP_BACKEND_PORT={{backend_port}}
       - NODE_ENV=production
