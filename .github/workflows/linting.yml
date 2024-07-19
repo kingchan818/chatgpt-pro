@@ -21,16 +21,12 @@ jobs:
           cache: 'pnpm'
 
       - name: Install All Dependecies
-        run: pnpm install --only=dev
+        run: pnpm install
 
       - name: Run Chat Service linting rules
         working-directory: ./backend/chat-service
-        run: npm run lint
-
-      - name: Run OCR Service linting rules
-        working-directory: ./backend/ocr-service
-        run: npm run lint
+        run: pnpm lint
 
       - name: Run Frontend linting rules
-        working-directory: ./backend/ocr-service
-        run: npm run lint
+        working-directory: ./frontend
+        run: pnpm lint

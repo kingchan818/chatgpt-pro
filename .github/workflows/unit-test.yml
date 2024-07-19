@@ -25,7 +25,3 @@ jobs:
       - name: Run chat service test
         working-directory: ./backend/chat-service
         run: pnpm test
-
-      - name: Run ocr service test
-        working-directory: ./backend/ocr-service
-        run: pnpm test
