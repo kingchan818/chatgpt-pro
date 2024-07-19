@@ -3,8 +3,8 @@
 
 const chatgptPredefinedModels = [
   {
-    id: 'gpt-3.5-turbo-0613',
-    name: '3 Turbo',
+    id: 'gpt-4o-mini',
+    name: '4o Mini',
     icon: 'RxLightningBolt',
     description: 'The most fastest chatbot in the world',
     size: 20,
