@@ -1,4 +1,4 @@
-name:  Unit test ocr service
+name: Unit test ocr service
 
 on: [pull_request]
 
@@ -7,30 +7,25 @@ jobs:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
+
+      - name: Setting up pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 9.5.0
+          run_install: false
+
       - name: Using Nodejs
         uses: actions/setup-node@v3
         with:
           node-version: '20'
 
-      - name: Cache npm dependencies
-        uses: actions/cache@v3
-        with:
-          path: '~/.npm'
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-
+      - name: Installing Dependencies
+        run: pnpm install
 
-      - name: Install Chat Service dev dependencies
-        working-directory: ./backend/chat-service
-        run: npm install --only=dev
       - name: Run chat service test
         working-directory: ./backend/chat-service
-        run: npm run test
+        run: pnpm test
 
-      - name: Install OCR Service dev dependencies
-        working-directory: ./backend/ocr-service
-        run: npm install --only=dev
       - name: Run ocr service test
         working-directory: ./backend/ocr-service
-        run: npm run test
-
+        run: pnpm test

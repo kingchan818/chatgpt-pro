@@ -69,6 +69,7 @@ describe('MongoExceptionFilter', () => {
 
     expect(response.status).toHaveBeenCalledWith(500);
     expect(response.json).toHaveBeenCalledWith({
+      message: 'Exception',
       mongodbErrorCode: 12345,
       path: '/test',
       timestamp: expect.any(String),
