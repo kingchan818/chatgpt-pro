@@ -4,7 +4,7 @@ const protocol = env.REACT_APP_BACKEND_PROTOCOL || 'http';
 const host = env.REACT_APP_BACKEND_HOST || 'localhost';
 const port = env.REACT_APP_BACKEND_PORT || '8181';
 const path = env.REACT_APP_BACKEND_PATH || 'api';
-const BASE_URL = `${protocol}://${host}:${port}/${path}`;
+const BASE_URL = path === '/' ? `${protocol}://${host}:${port}` : `${protocol}://${host}:${port}/${path}`;
 
 const CREATE_CHAT_ENDPOINT = `${BASE_URL}/chat/create`;
 const CONTINUE_CHAT_ENDPOINT = `${BASE_URL}/chat/continue`;
