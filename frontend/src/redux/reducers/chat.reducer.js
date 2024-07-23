@@ -1,4 +1,3 @@
-import { List } from 'immutable';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { isEmpty, get, isNil, omit } from 'lodash';

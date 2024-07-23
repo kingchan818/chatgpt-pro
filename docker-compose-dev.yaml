@@ -1,14 +1,36 @@
-version: '3.5'
-
 services:
+  mongo1:
+    extends:
+      file: docker-compose-replica.yaml
+      service: mongo1
+
+  mongo2:
+    extends:
+      file: docker-compose-replica.yaml
+      service: mongo2
+
+  mongo3:
+    extends:
+      file: docker-compose-replica.yaml
+      service: mongo3
+
+  mongo-setup:
+    extends:
+      file: docker-compose-replica.yaml
+      service: setup
+
   chat-service:
     container_name: chat-service
     build:
-      context: ./backend/chat-service
+      context: .
       dockerfile: Dockerfile
-      target: dev
+      target: backend-chat-service-dev
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
     volumes:
-      - ./backend/chat-service:/app
+      - ./backend/chat-service:/app/backend/chat-service
       - /app/node_modules
     ports:
       - 8181:8181
@@ -16,16 +38,19 @@ services:
   chatgpt:
     container_name: chatgpt
     build:
-      context: ./frontend
+      context: .
       dockerfile: Dockerfile
-      target: dev
-    env_file:
-      - ./docker-env/frontend.env
+      target: frontend-dev
     volumes:
-      - ./frontend:/app
+      - ./frontend:/app/frontend
       - /app/node_modules
     ports:
       - 3000:3000
     depends_on:
       - chat-service
     restart: unless-stopped
+
+volumes:
+  mongo1:
+  mongo2:
+  mongo3:
