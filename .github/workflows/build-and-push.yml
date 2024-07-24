@@ -19,10 +19,11 @@ jobs:
       - name: Build Docker image from Frontend Project
         uses: docker/build-push-action@v2
         with:
-          context: .
-          target: frontend-app
+          context: ./frontend
+          file: frontend/Dockerfile
           push: true
           tags: kingchan818/chatgpt-pro:latest
+          target: final
 
   build-chat-service:
     runs-on: ubuntu-latest
@@ -37,7 +38,8 @@ jobs:
       - name: Build Docker image from Frontend Project
         uses: docker/build-push-action@v2
         with:
-          context: .
-          target: backend-chat-service
+          context: ./backend/chat-service
+          file: backend/chat-service/Dockerfile
           push: true
           tags: kingchan818/chatgpt-pro-chat-service:latest
+          target: final

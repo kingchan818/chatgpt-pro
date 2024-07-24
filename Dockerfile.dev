@@ -1,0 +1,22 @@
+FROM node:20 AS dev-base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+
+FROM dev-base AS dev-builder
+WORKDIR /app
+COPY . /app/
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install
+
+# Development images
+FROM dev-base AS frontend-dev
+WORKDIR /app/frontend
+COPY --from=dev-builder /app/ /app/
+EXPOSE 3000
+CMD ["npm", "run", "start"]
+
+FROM dev-base AS backend-chat-service-dev
+WORKDIR /app/backend/chat-service
+COPY --from=dev-builder /app /app/
+EXPOSE 8181
+CMD ["npm", "run", "dev"]

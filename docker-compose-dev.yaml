@@ -23,7 +23,7 @@ services:
     container_name: chat-service
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       target: backend-chat-service-dev
     depends_on:
       - mongo1
@@ -39,7 +39,7 @@ services:
     container_name: chatgpt
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.dev
       target: frontend-dev
     volumes:
       - ./frontend:/app/frontend
