@@ -12,6 +12,7 @@ import { ChatGuard } from './chat.guard';
 import { InjectConnection } from '@nestjs/mongoose';
 import { Connection } from 'mongoose';
 import { ApiKeyService } from 'src/api-key/api-key.service';
+import * as moment from 'moment';
 
 @UseGuards(ChatGuard)
 @Controller('chat')
@@ -43,6 +44,7 @@ export class ChatController {
         chatOptions: body.chatOptions,
         tokenUsage: {},
         llmType: gptModelType,
+        createdDT: moment().toISOString(),
       },
       {
         messageId: generateUniqueKey(),
@@ -53,6 +55,7 @@ export class ChatController {
         chatOptions: body.chatOptions,
         tokenUsage: {},
         llmType: gptModelType,
+        createdDT: moment().add(1, 'millisecond').toISOString(),
       },
     ]);
     return sessionResult;

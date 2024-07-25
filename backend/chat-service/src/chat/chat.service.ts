@@ -101,6 +101,7 @@ export class ChatService {
         session,
       );
 
+      messages.push(chatCompletionObject);
       const { usedTokens, usedUSD } = this.calculateToken(requestId, {
         model: chatCompletionObject?.llmType as any,
         collectionMessages: messages,

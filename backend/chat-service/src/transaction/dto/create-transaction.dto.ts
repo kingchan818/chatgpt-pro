@@ -10,4 +10,5 @@ export class CreateTransactionDto {
   tokenUsage: Record<string, any>;
   collectionId: string;
   role: 'system' | 'user' | 'assistant';
+  createdDT?: string;
 }
