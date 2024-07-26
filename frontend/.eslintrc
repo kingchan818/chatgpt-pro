@@ -27,6 +27,9 @@
     },
     "rules": {
         // Add any additional rules or overrides here
+        "react/jsx-no-constructed-context-values": [
+            "off"
+        ],
         "jsx-a11y/label-has-associated-control": [
             "off"
         ],
@@ -40,6 +43,9 @@
             "off"
         ],
         "react/forbid-prop-types": [
+            "off"
+        ],
+        "no-shadow": [
             "off"
         ],
         "react/jsx-props-no-spreading": [

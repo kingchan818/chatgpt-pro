@@ -6,6 +6,7 @@ import toast, { Toaster } from 'react-hot-toast';
 import { isEmpty, get } from 'lodash';
 import SideBar from '../components/SideBar';
 import Nav from '../components/Nav';
+import UsagePopover from '../components/UsagePopover';
 import ChatSection from '../components/ChatSection';
 import ChatInput from '../components/ChatInput';
 import { loadOpenAIModels } from '../redux/reducers/modelConfigurator.reducer';
@@ -64,7 +65,11 @@ export default function Home() {
             streamMessageText={streamMessageText}
             streamMessageInfo={streamMessageInfo}
           />
-          <ChatInput />
+
+          <div>
+            <UsagePopover />
+            <ChatInput />
+          </div>
         </div>
       </div>
     </div>
