@@ -84,7 +84,14 @@ function ModelConfiguratorDialog({ setToggleDropDownList }) {
           <Textarea
             placeholder="Try to write something....."
             rows={10}
-            onChange={(e) => dispatch(setCurrentSystemPrompt(e.target?.value))}
+            onChange={(e) =>
+              dispatch(
+                setCurrentSystemPrompt({
+                  id: 'custom',
+                  prompt: e.target.value,
+                }),
+              )
+            }
             value={currentSystemPrompt.prompt || ''}
           />
           <p className="text-xs text-muted-foreground">

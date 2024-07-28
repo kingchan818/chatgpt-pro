@@ -33,7 +33,7 @@ function UsagePopover() {
   }, [popoverClicked, dispatch]);
 
   return (
-    <div className="hidden z-10 ml-5 dark:text-white dark:bg-black absolute lg:block">
+    <div className="hidden z-10 ml-5 dark:text-white dark:bg-black absolute lg:block bottom-6">
       <Popover>
         <PopoverTrigger asChild onClick={() => setPopoverClicked(!popoverClicked)}>
           <Button variant="outline" size="icon">
