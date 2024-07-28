@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import { setCurrentUser } from './redux/reducers/user.reducer';
 import { ThemeProvider } from './components/theme-provider';
+import { Toaster } from './components/ui/sonner';
 
 function App() {
   const { currentUser } = useSelector((state) => state.user);
@@ -23,6 +24,7 @@ function App() {
       <BrowserRouter basename="/">
         <Routes>{isNil(currentUser) ? <Route path="/" Component={Login} /> : <Route path="/" Component={Home} />}</Routes>
       </BrowserRouter>
+      <Toaster />
     </ThemeProvider>
   );
 }

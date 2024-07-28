@@ -19,7 +19,7 @@ function CopyCode({ text }) {
 
   return (
     <button type="button" className="opacity-60 cursor-pointer flex" onClick={() => copyToClipboard(text)}>
-      {copied ? <span className="mr-2">Copied!</span> : <LuClipboardCopy />}
+      {copied ? <span className="mr-2 text-xs">Copied!</span> : <LuClipboardCopy className="z-0" />}
     </button>
   );
 }

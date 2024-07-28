@@ -1,85 +1,54 @@
 {
-    "extends": [
-        "airbnb",
-        "airbnb/hooks",
-        "plugin:react/recommended",
-        "plugin:jsx-a11y/recommended",
-        "plugin:import/errors",
-        "plugin:import/warnings",
-        "react-app",
-        "prettier"
+  "extends": [
+    "airbnb",
+    "airbnb/hooks",
+    "plugin:react/recommended",
+    "plugin:jsx-a11y/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "react-app",
+    "prettier",
+  ],
+  "plugins": ["react", "jsx-a11y", "import"],
+  "parserOptions": {
+    "ecmaVersion": 2021,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true,
+    },
+  },
+  "env": {
+    "browser": true,
+    "es2021": true,
+  },
+  "rules": {
+    // Add any additional rules or overrides here
+    "react/jsx-no-constructed-context-values": ["off"],
+    "jsx-a11y/label-has-associated-control": ["off"],
+    "import/no-extraneous-dependencies": ["warn"],
+    "react/display-name": ["off"],
+    "import/prefer-default-export": ["off"],
+    "react/forbid-prop-types": ["off"],
+    "no-shadow": ["off"],
+    "react/jsx-props-no-spreading": ["off"],
+    "react/prop-types": ["off"],
+    "react/function-component-definition": ["off"],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        "js": "never",
+        "jsx": "never",
+      },
     ],
-    "plugins": [
-        "react",
-        "jsx-a11y",
-        "import"
-    ],
-    "parserOptions": {
-        "ecmaVersion": 2021,
-        "sourceType": "module",
-        "ecmaFeatures": {
-            "jsx": true
-        }
+    "react/react-in-jsx-scope": ["off"],
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".jsx"],
+      },
     },
-    "env": {
-        "browser": true,
-        "es2021": true
-    },
-    "rules": {
-        // Add any additional rules or overrides here
-        "react/jsx-no-constructed-context-values": [
-            "off"
-        ],
-        "jsx-a11y/label-has-associated-control": [
-            "off"
-        ],
-        "import/no-extraneous-dependencies": [
-            "warn"
-        ],
-        "react/display-name": [
-            "off"
-        ],
-        "import/prefer-default-export": [
-            "off"
-        ],
-        "react/forbid-prop-types": [
-            "off"
-        ],
-        "no-shadow": [
-            "off"
-        ],
-        "react/jsx-props-no-spreading": [
-            "off"
-        ],
-        "react/prop-types": [
-            "off"
-        ],
-        "react/function-component-definition": [
-            "off"
-        ],
-        "import/extensions": [
-            "error",
-            "ignorePackages",
-            {
-                "js": "never",
-                "jsx": "never"
-            }
-        ]
-    },
-    "settings": {
-        "import/resolver": {
-            "alias": {
-                "map": [
-                    [
-                        "@",
-                        "./src"
-                    ]
-                ],
-                "extensions": [
-                    ".js",
-                    ".jsx"
-                ]
-            }
-        }
-    }
+  },
 }

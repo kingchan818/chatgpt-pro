@@ -1,6 +1,4 @@
 import React, { useEffect, useRef, useState } from 'react';
-import styled from 'styled-components';
-import { MdKeyboardArrowRight, MdOutlineKeyboardArrowLeft } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { isEmpty, get } from 'lodash';
@@ -44,11 +42,13 @@ export default function Home() {
     if (models && models.length === 0) {
       dispatch(loadOpenAIModels());
     }
-  }, [error, models]);
+  }, [error, models, dispatch]);
 
   return (
     <div className="light:bg-[#343541] dark:bg-black">
+      {/* TODO: removing react hot toaster migrate to shadcn sonnor */}
       <Toaster />
+      {/* TODO: do check chatHistory in next dev statge */}
       <SideBar chats={chats} ref={sideBarRef} isOpen={rightSideBarToggled} />
       <div
         className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'} overflow-hidden`}

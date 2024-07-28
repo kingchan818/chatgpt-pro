@@ -37,7 +37,7 @@ function Message({ role, text, messages, messageIdx }) {
       {messageIdx === messages.length - 1 && (
         <div className="mt-2 opacity-60 cursor-pointer flex">
           <CopyCode text={text} />
-          <IoReloadOutline className="ml-3" />
+          {/* <IoReloadOutline className="ml-3" /> TODO: Do it later */}
         </div>
       )}
     </div>

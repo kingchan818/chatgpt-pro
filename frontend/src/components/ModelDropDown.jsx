@@ -30,13 +30,13 @@ function ModelDropDown() {
       {toggleDropDownList && (
         <button
           type="button"
-          className="content flex flex-col items-center justify-center mt-2 min-w-[340px] max-w-xs overflow-hidden rounded-lg border border-gray-100 bg-token-surface-primary shadow-lg dark:border-gray-700 bg-white dark:bg-[#202123]"
+          className="content flex flex-col items-center justify-center mt-2 min-w-[340px] max-w-xs overflow-hidden rounded-lg border border-gray-100 bg-token-surface-primary shadow-lg dark:border-gray-700 bg-white dark:bg-[#202123] p-3"
         >
           {predefinedModels.map((model) => {
             const ReactIcon = createIcon(model.icon);
             return (
               <button
-                className="flex p-3 justify-between items-center"
+                className="flex py-2 px-1 justify-between items-center"
                 type="button"
                 key={model.id}
                 onClick={() => {
@@ -46,9 +46,9 @@ function ModelDropDown() {
                 <ReactIcon size={model.size} />
                 <div className="mx-3 text-start">
                   <div className="text-base">
-                    ChatGPT <span className="text-white/70">{model.name}</span>
+                    ChatGPT <span className="dark:text-white/70 text-black/50">{model.name}</span>
                   </div>
-                  <div className="text-sm text-gray-400">{model.description}</div>
+                  <div className="text-sm dark:text-gray-400 text-black/50">{model.description}</div>
                 </div>
                 <InputBox
                   isActive={currentModel.id === model.id}
