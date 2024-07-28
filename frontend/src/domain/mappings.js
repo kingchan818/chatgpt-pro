@@ -46,7 +46,7 @@ const TRANSFORM_MODEL_CONFIGURATOR_TO_CHAT_OPTIONS = [
     transformTo: 'temperature',
   },
   {
-    transformFrom: 'currentSystemPrompt',
+    transformFrom: 'currentSystemPrompt.prompt',
     transformTo: 'systemMessage',
   },
 ];
