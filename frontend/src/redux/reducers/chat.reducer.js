@@ -85,6 +85,7 @@ const chatSlice = createSlice({
     setInputMsg: (state, action) => ({ ...state, inputMsg: action.payload }),
     pushMessage: (state, action) => ({ ...state, messages: [...state.messages, action.payload] }),
     setCollectionId: (state, action) => ({ ...state, currentCollectionId: action.payload }),
+    clearMessage: (state, action) => ({ ...state, messages: [], currentCollectionId: null }),
   },
   extraReducers: (builder) => {
     builder
@@ -107,6 +108,7 @@ const chatSlice = createSlice({
   },
 });
 
-export const { setInputMsg, pushMessage, setStreamMsg, setCollectionId, setStreamMsgText, setStreamMsgInfo } = chatSlice.actions;
+export const { setInputMsg, pushMessage, setStreamMsg, setCollectionId, setStreamMsgText, setStreamMsgInfo, clearMessage } =
+  chatSlice.actions;
 
 export default chatSlice.reducer;

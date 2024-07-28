@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { RiArrowDropDownLine } from 'react-icons/ri';
+import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
+import { FaRegEdit } from 'react-icons/fa';
 import { createIcon } from '../utils';
 import { loadOpenAIModels, setCurrentModel } from '../redux/reducers/modelConfigurator.reducer';
 import InputBox from './InputBox';
@@ -24,7 +25,8 @@ function ModelDropDown() {
         <div>
           ChatGPT <span className="dark:text-white/50 text-black/50">{currentModel.name}</span>
         </div>
-        <RiArrowDropDownLine size={20} />
+        {toggleDropDownList && <RiArrowDropUpLine size={20} />}
+        {!toggleDropDownList && <RiArrowDropDownLine size={20} />}
       </button>
 
       {toggleDropDownList && (
