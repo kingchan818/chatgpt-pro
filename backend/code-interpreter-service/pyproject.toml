@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "code-interpreter-service"
+version = "0.1.0"
+description = ""
+authors = ["calvin"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+fastapi = "^0.112.2"
+open-interpreter = "^0.3.8"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
