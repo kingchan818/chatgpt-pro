@@ -72,7 +72,7 @@ const chatSlice = createSlice({
   name: 'chat',
   initialState: {
     inputMsg: '',
-    messages: msg,
+    messages: [],
     streamInfo: {},
     streamMessageText: '',
     isProcessing: false,
