@@ -16,6 +16,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Copy pnpm-lock.yaml to chat-service directory
+        run: cp pnpm-lock.yaml frontend/
+      - name: Copy pnpm-workspace.yaml to chat-service directory
+        run: cp pnpm-workspace.yaml frontend/
       - name: Build Docker image from Frontend Project
         uses: docker/build-push-action@v2
         with:
@@ -35,6 +39,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Copy pnpm-lock.yaml to chat-service directory
+        run: cp pnpm-lock.yaml backend/chat-service/
+      - name: Copy pnpm-workspace.yaml to chat-service directory
+        run: cp pnpm-workspace.yaml backend/chat-service/
       - name: Build Docker image from Frontend Project
         uses: docker/build-push-action@v2
         with:
