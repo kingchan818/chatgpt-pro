@@ -28,6 +28,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { DEFAULT_SYSTEM_PROMPT } from '@/domain';
 import { toast } from 'sonner';
 import { IoAddCircleOutline } from 'react-icons/io5';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from './theme-provider';
 
 // function EmptySystemPrompt() {
@@ -48,11 +49,17 @@ function SettingsMenu() {
 
   const { systemPrompts = [], currentSystemPrompt } = useSelector((state) => state.modelConfigurator);
   const dispatch = useDispatch();
+  const navigation = useNavigate();
 
   useEffect(() => {
     const localSystemPrompts = JSON.parse(localStorage.getItem('systemPrompts')) || [];
     dispatch(setSystemPrompts([...localSystemPrompts, ...DEFAULT_SYSTEM_PROMPT]));
   }, [dispatch]);
+
+  const logout = () => {
+    localStorage.removeItem('apiKey');
+    navigation(0);
+  };
 
   return (
     <Menubar>
@@ -130,6 +137,10 @@ function SettingsMenu() {
           {/* </MenubarItem> */}
           <MenubarSeparator />
           <MenubarItem className="justify-center">More stuffs are coming...</MenubarItem>
+          <MenubarSeparator />
+          <MenubarItem className="justify-center" onClick={logout}>
+            Logout
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>

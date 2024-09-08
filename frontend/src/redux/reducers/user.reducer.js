@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import axios from 'axios';
-import {ENDPOINTS} from '../../domain'
+import { ENDPOINTS } from '../../domain';
 
 export const register = createAsyncThunk('users/fetchByIdStatus', async (openAIAPIKey, thunkAPI) => {
   try {
@@ -19,7 +19,6 @@ export const register = createAsyncThunk('users/fetchByIdStatus', async (openAIA
 export const validateInviteToken = createAsyncThunk('users/validateInviteToken', async (inviteToken, thunkAPI) => {
   try {
     // TODO: handle invite token should create a api function that validate the invite token
-
     const response = setTimeout(() => true, 1000);
     localStorage.setItem('apiKey', inviteToken);
     return response;

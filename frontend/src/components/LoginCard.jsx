@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { register, validateInviteToken } from '../redux/reducers/user.reducer';
 import Loading from './Loading';
 import TextInput from './TextInput';
@@ -8,13 +9,18 @@ function LoginCard() {
   const [openAIKey, setOpenAIKey] = useState('');
   const [inviteToken, setInviteToken] = useState('');
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.user);
+  const { loading, error } = useSelector((state) => state.user);
+  const navigate = useNavigate();
 
   const handleRegister = () => {
     if (openAIKey) {
       dispatch(register(openAIKey));
     } else if (inviteToken) {
       dispatch(validateInviteToken(inviteToken));
+    }
+
+    if (!loading && !error) {
+      navigate('/');
     }
   };
 

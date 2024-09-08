@@ -1,7 +1,7 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { isNil, isEmpty } from 'lodash';
+import { isEmpty, isNil } from 'lodash';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import { setCurrentUser } from './redux/reducers/user.reducer';

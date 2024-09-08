@@ -41,7 +41,7 @@ function ChatInput() {
   };
 
   return (
-    <div className="flex items-center justify-center mx-4 sticky bottom-0">
+    <div className="flex items-center justify-center mx-4">
       <InputStyle className="sm:w-full md:w-[40rem] xl:w-[60rem] w-[50rem]">
         <textarea
           ref={textareaRef}

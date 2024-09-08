@@ -4,6 +4,7 @@ import { isEmpty, get, isNil, omit } from 'lodash';
 import { transformHelper } from '../../utils';
 import { MAPPING_CONFIGS, ENDPOINTS } from '../../domain';
 import { continueChat, createChat } from '../../services/api/chat-completion';
+import { msg } from './test-data/chat';
 
 const createSSERequest = async (collectionId, thunkAPI) => {
   const ctrl = new AbortController();
@@ -71,7 +72,7 @@ const chatSlice = createSlice({
   name: 'chat',
   initialState: {
     inputMsg: '',
-    messages: [],
+    messages: msg,
     streamInfo: {},
     streamMessageText: '',
     isProcessing: false,

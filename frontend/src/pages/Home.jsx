@@ -2,6 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { isEmpty, get } from 'lodash';
+import { Button } from '@/components/ui/button';
+import { FiLogOut } from 'react-icons/fi';
+import { useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
 import Nav from '../components/Nav';
 import UsagePopover from '../components/UsagePopover';
@@ -13,7 +16,7 @@ export default function Home() {
   // TODO: Better to centralize the state in a context provider
   // TODO: Use state manager Redux
   // TODO: Setup i18n for internationalization
-  const [rightSideBarToggled, setRightSideBarToggle] = useState(false);
+  const [rightSideBarToggled] = useState(false);
   const [leftSideBarToggled, setLeftSideBarToggle] = useState(false);
   const sideBarRef = useRef(null);
   const chats = [
@@ -31,7 +34,6 @@ export default function Home() {
 
   const { messages, error, isProcessing, streamMessageText, streamMessageInfo } = useSelector((state) => state.chat);
   const { models } = useSelector((state) => state.modelConfigurator);
-
   const dispatch = useDispatch();
   useEffect(() => {
     if (!isEmpty(error)) {
@@ -65,8 +67,7 @@ export default function Home() {
             streamMessageText={streamMessageText}
             streamMessageInfo={streamMessageInfo}
           />
-
-          <div>
+          <div className="sticky bottom-0">
             <UsagePopover />
             <ChatInput />
           </div>
