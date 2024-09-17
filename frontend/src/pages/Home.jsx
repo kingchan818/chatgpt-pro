@@ -46,18 +46,16 @@ export default function Home() {
   }, [error, models, dispatch]);
 
   return (
-    <div className="light:bg-[#343541] dark:bg-black">
-      {/* <SideBar /> */}
-
+    <div className="light:bg-[#343541] dark:bg-black overflow-hidden max-w-full">
       {/* TODO: removing react hot toaster migrate to shadcn sonnor */}
       <Toaster />
       {/* TODO: do check chatHistory in next dev statge */}
-      <div className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'}`}>
+      <div className="flex item-center justify-center">
         {/* <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
           {rightSideBarToggled ? <MdOutlineKeyboardArrowLeft size={30} /> : <MdKeyboardArrowRight size={30} />}
         </ToggleLeftSideBarBtn> */}
-
-        <div className={`flex flex-col ${isEmpty(messages) ? 'justify-between' : ''} w-full h-screen relative`}>
+        <SideBar />
+        <div className={`flex flex-col ${isEmpty(messages) ? 'justify-between' : ''} h-[100dvh] relative w-full`}>
           <Nav leftSideBarToggled={leftSideBarToggled} setLeftSideBarToggle={setLeftSideBarToggle} />
           <ChatSection
             messages={messages}
@@ -66,7 +64,7 @@ export default function Home() {
             streamMessageInfo={streamMessageInfo}
           />
           <div className="sticky bottom-0">
-            <UsagePopover />
+            {/* <UsagePopover /> */}
             <ChatInput />
           </div>
         </div>

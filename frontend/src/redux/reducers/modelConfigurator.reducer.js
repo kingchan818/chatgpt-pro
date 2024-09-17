@@ -33,8 +33,19 @@ const modelConfiguratorSlice = createSlice({
   reducers: {
     setCurrentModel: (state, action) => ({ ...state, currentModel: action.payload }),
     setAvailableModels: (state, action) => ({ ...state, models: action.payload }),
-    setModelTemperature: (state, action) => ({ ...state, modelTemperature: action.payload }),
-    setCurrentSystemPrompt: (state, action) => ({ ...state, currentSystemPrompt: action.payload }),
+    setModelTemperature: (state, action) => {
+      const localModelSettings = JSON.parse(localStorage.getItem('modelConfigurator'));
+      localStorage.setItem(
+        'modelConfigurator',
+        JSON.stringify({ ...localModelSettings, modelTemperature: action.payload || 0.5 }),
+      );
+      return { ...state, modelTemperature: action.payload };
+    },
+    setCurrentSystemPrompt: (state, action) => {
+      const localModelSettings = JSON.parse(localStorage.getItem('modelConfigurator'));
+      localStorage.setItem('modelConfigurator', JSON.stringify({ ...localModelSettings, currentSystemPrompt: action.payload }));
+      return { ...state, currentSystemPrompt: action.payload };
+    },
     setSystemPrompts: (state, action) => ({ ...state, systemPrompts: action.payload }),
   },
   extraReducers: (builder) => {

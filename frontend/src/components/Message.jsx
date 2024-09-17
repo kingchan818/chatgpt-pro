@@ -23,7 +23,7 @@ Message.propTypes = {
 
 function Message({ role, text, messages, messageIdx }) {
   return (
-    <div className="sm:w-[45rem] md:w-[50rem] xl:w-[80rem] px-4 py-2 dark:text-white mb-3">
+    <div className=" px-4 py-2 dark:text-white mb-3">
       <div>{role === 'assistant' ? <AiOutlineRobot /> : role}</div>
       <div className="mt-1">
         <Markdown content={text} />

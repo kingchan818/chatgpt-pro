@@ -2,9 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { RiArrowDropDownLine, RiArrowDropUpLine } from 'react-icons/ri';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { FaRegEdit } from 'react-icons/fa';
 import { createIcon } from '../utils';
-import { loadOpenAIModels, setCurrentModel } from '../redux/reducers/modelConfigurator.reducer';
+import {
+  loadOpenAIModels,
+  setCurrentModel,
+  setCurrentSystemPrompt,
+  setModelTemperature,
+} from '../redux/reducers/modelConfigurator.reducer';
 import InputBox from './InputBox';
 import ModelConfiguratorDialog from './ModelConfiguratorDialog';
 
@@ -15,11 +19,16 @@ function ModelDropDown() {
 
   useEffect(() => {
     dispatch(loadOpenAIModels());
+    const modelSettings = JSON.parse(localStorage.getItem('modelConfigurator'));
+    if (modelSettings) {
+      dispatch(setCurrentSystemPrompt(modelSettings.currentSystemPrompt));
+      dispatch(setModelTemperature(modelSettings.modelTemperature));
+    }
   }, [dispatch]);
 
   return (
     <DropDownList
-      className={`flex items-center cursor-pointer font-medium rounded-md p-2 hover:bg-black/10 dark:hover:bg-white/10 ${toggleDropDownList ? 'bg-black/10' : ''} z-30`}
+      className={`flex items-center cursor-pointer font-medium rounded-md p-2 hover:bg-black/10 dark:hover:bg-white/10 ${toggleDropDownList ? 'bg-black/10' : ''} z-30 h-11`}
     >
       <button type="button" className="flex items-center" onClick={() => setToggleDropDownList(!toggleDropDownList)}>
         <div>

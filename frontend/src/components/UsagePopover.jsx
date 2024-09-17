@@ -10,6 +10,7 @@ import { handleGetUserTotalUsage, handleQueryUserUsage, setFilter } from '@/redu
 import { useDispatch, useSelector } from 'react-redux';
 import { TIME_UNIT } from '@/domain';
 import * as moment from 'moment';
+import { cn } from '@/lib/utils';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from './ui/card';
 
 const chartConfig = {
@@ -19,7 +20,7 @@ const chartConfig = {
   },
 };
 
-function UsagePopover() {
+function UsagePopover({ className }) {
   const [popoverClicked, setPopoverClicked] = React.useState(false);
   const dispatch = useDispatch();
   const { usage, userTotalUsage, filters } = useSelector((state) => state.chatHistory);
@@ -33,10 +34,10 @@ function UsagePopover() {
   }, [popoverClicked, dispatch]);
 
   return (
-    <div className="hidden z-10 ml-5 dark:text-white dark:bg-black lg:block absolute left-0">
+    <div>
       <Popover>
         <PopoverTrigger asChild onClick={() => setPopoverClicked(!popoverClicked)}>
-          <Button variant="outline" size="icon">
+          <Button variant="outline" size="icon" className={cn('z-10 dark:text-white dark:bg-black', className)}>
             <UserCircle />
           </Button>
         </PopoverTrigger>
