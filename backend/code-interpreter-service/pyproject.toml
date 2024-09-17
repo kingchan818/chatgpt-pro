@@ -2,13 +2,19 @@
 name = "code-interpreter-service"
 version = "0.1.0"
 description = ""
-authors = ["calvin"]
+authors = ["kingchan818 <chancch70@gmail.com>"]
 readme = "README.md"
 
+
 [tool.poetry.dependencies]
-python = "^3.12"
-fastapi = "^0.112.2"
-open-interpreter = "^0.3.8"
+python = "^3.11"
+fastapi = "^0.114.2"
+open-interpreter = "^0.3.13"
+uvicorn = "^0.30.6"
+pydantic = "^2.9.1"
+
+[tool.poe.tasks]
+start = "uvicorn server.main:app --port=8080"
 
 
 [build-system]
