@@ -9,8 +9,6 @@ import { CreateTransactionDto } from 'src/transaction/dto/create-transaction.dto
 
 @Injectable({ scope: Scope.DEFAULT })
 export class ChatgptService {
-  chatGPTAPI: any;
-  importChatGptInstance: any;
   constructor(
     private readonly configureService: ConfigService,
     private readonly logger: CustomLoggerService,

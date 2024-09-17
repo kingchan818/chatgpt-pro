@@ -18,7 +18,6 @@ export default function Home() {
   // TODO: Setup i18n for internationalization
   const [rightSideBarToggled] = useState(false);
   const [leftSideBarToggled, setLeftSideBarToggle] = useState(false);
-  const sideBarRef = useRef(null);
   const chats = [
     { sessionId: 1, name: 'Business Strategies Discussion' },
     { sessionId: 2, name: 'Marketing Innovations' },
@@ -48,18 +47,17 @@ export default function Home() {
 
   return (
     <div className="light:bg-[#343541] dark:bg-black">
+      {/* <SideBar /> */}
+
       {/* TODO: removing react hot toaster migrate to shadcn sonnor */}
       <Toaster />
       {/* TODO: do check chatHistory in next dev statge */}
-      <SideBar chats={chats} ref={sideBarRef} isOpen={rightSideBarToggled} />
-      <div
-        className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'} overflow-hidden`}
-      >
+      <div className={`relative transition-all duration-500 text-black ${rightSideBarToggled ? 'ml-64' : 'ml-0'}`}>
         {/* <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
           {rightSideBarToggled ? <MdOutlineKeyboardArrowLeft size={30} /> : <MdKeyboardArrowRight size={30} />}
         </ToggleLeftSideBarBtn> */}
 
-        <div className={`flex flex-col ${isEmpty(messages) ? 'justify-between' : ''} h-screen w-full overflow-auto relative`}>
+        <div className={`flex flex-col ${isEmpty(messages) ? 'justify-between' : ''} w-full h-screen relative`}>
           <Nav leftSideBarToggled={leftSideBarToggled} setLeftSideBarToggle={setLeftSideBarToggle} />
           <ChatSection
             messages={messages}

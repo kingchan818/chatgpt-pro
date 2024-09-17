@@ -1,4 +1,4 @@
-import { Body, Controller, forwardRef, HttpException, HttpStatus, Inject, Post, Req } from '@nestjs/common';
+import { Body, Controller, HttpException, HttpStatus, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { UserService } from '../user/user.service';
 import { sessionTransaction } from 'src/utils/common';
