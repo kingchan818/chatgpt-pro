@@ -1,13 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import toast, { Toaster } from 'react-hot-toast';
 import { isEmpty, get } from 'lodash';
-import { Button } from '@/components/ui/button';
-import { FiLogOut } from 'react-icons/fi';
-import { useNavigate } from 'react-router-dom';
 import SideBar from '../components/SideBar';
 import Nav from '../components/Nav';
-import UsagePopover from '../components/UsagePopover';
 import ChatSection from '../components/ChatSection';
 import ChatInput from '../components/ChatInput';
 import { loadOpenAIModels } from '../redux/reducers/modelConfigurator.reducer';
@@ -46,11 +42,11 @@ export default function Home() {
   }, [error, models, dispatch]);
 
   return (
-    <div className="light:bg-[#343541] dark:bg-black overflow-hidden max-w-full">
+    <div className="light:bg-[#343541] dark:bg-black overflow-hidden">
       {/* TODO: removing react hot toaster migrate to shadcn sonnor */}
       <Toaster />
       {/* TODO: do check chatHistory in next dev statge */}
-      <div className="flex item-center justify-center">
+      <div className="flex justify-center">
         {/* <ToggleLeftSideBarBtn onClick={() => setRightSideBarToggle(!rightSideBarToggled)}>
           {rightSideBarToggled ? <MdOutlineKeyboardArrowLeft size={30} /> : <MdKeyboardArrowRight size={30} />}
         </ToggleLeftSideBarBtn> */}

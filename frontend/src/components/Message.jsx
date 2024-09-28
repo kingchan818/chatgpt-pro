@@ -1,7 +1,6 @@
 import React, { memo } from 'react';
 import { AiOutlineRobot } from 'react-icons/ai';
 import { FiEdit2 } from 'react-icons/fi';
-import { IoReloadOutline } from 'react-icons/io5';
 import PropTypes from 'prop-types';
 
 import Markdown from './Markdown';

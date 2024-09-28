@@ -35,7 +35,7 @@ function ChatSection({ width, messages = [], isProcessing, streamMessageText, st
       className={`flex flex-1 items-center justify-center mx-6 ${(!isEmpty(messages) || (isProcessing && isEmpty(messages))) && 'flex-grow'} mt-3 overflow-auto`}
     >
       <div
-        className={`flex flex-col h-full ${isEmpty(messages) || (!isProcessing && isEmpty(messages)) ? 'items-center justify-center' : ''} `}
+        className={`flex flex-col ${isEmpty(messages) || (!isProcessing && isEmpty(messages)) ? 'items-center justify-center' : ''} max-w-5xl`}
       >
         {messages && isEmpty(messages) && (
           <>
