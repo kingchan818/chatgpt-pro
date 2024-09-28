@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Menubar,
   MenubarContent,
@@ -12,27 +12,13 @@ import {
 import { LuSettings2 } from 'react-icons/lu';
 import { MenubarSub } from '@radix-ui/react-menubar';
 import { setSystemPrompts } from '@/redux/reducers/modelConfigurator.reducer';
-import { useSelector, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { DEFAULT_SYSTEM_PROMPT } from '@/domain';
 import { useTheme } from './theme-provider';
 
-// function EmptySystemPrompt() {
-//   return (
-//     <div className="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm">
-//       <div className="flex flex-col items-center gap-1 text-center">
-//         <h3 className="text-2xl font-bold tracking-tight">You have no products</h3>
-//         <p className="text-sm text-muted-foreground">You can start selling as soon as you add a product.</p>
-//         <Button className="mt-4">Add Some Prompt</Button>
-//       </div>
-//     </div>
-//   );
-// }
-
 function SettingsMenu() {
   const { setTheme } = useTheme();
-  const [isOpenSheet, setIsOpenSheet] = useState(false);
 
-  const { systemPrompts = [], currentSystemPrompt } = useSelector((state) => state.modelConfigurator);
   const dispatch = useDispatch();
 
   useEffect(() => {
