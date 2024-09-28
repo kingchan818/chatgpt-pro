@@ -1,6 +1,6 @@
 import { isEmpty } from 'lodash';
 import PropTypes from 'prop-types';
-import React, { memo } from 'react';
+import React, { memo, useRef, useEffect } from 'react';
 
 import Message from './Message';
 import { ReactComponent as ChatGPTSvg } from '../assets/chatgpt-24.svg';
@@ -30,12 +30,21 @@ ChatSection.defaultProps = {
 };
 
 function ChatSection({ width, messages = [], isProcessing, streamMessageText, streamMessageInfo }) {
+  const chatSecContentRef = useRef(null);
+
+  useEffect(() => {
+    if (chatSecContentRef.current) {
+      chatSecContentRef.current.scrollTo(0, chatSecContentRef.current.scrollHeight);
+    }
+  }, [messages.length, streamMessageText]);
+
   return (
     <div
       className={`flex flex-1 items-center justify-center mx-6 ${(!isEmpty(messages) || (isProcessing && isEmpty(messages))) && 'flex-grow'} mt-3 overflow-auto`}
+      ref={chatSecContentRef}
     >
       <div
-        className={`flex flex-col ${isEmpty(messages) || (!isProcessing && isEmpty(messages)) ? 'items-center justify-center' : ''} max-w-5xl`}
+        className={`flex flex-col h-full ${isEmpty(messages) || (!isProcessing && isEmpty(messages)) ? 'items-center justify-center' : ''} lg:max-w-5xl md:max-w-xl w-full`}
       >
         {messages && isEmpty(messages) && (
           <>
