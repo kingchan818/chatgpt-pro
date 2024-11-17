@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app/frontend
 RUN mv /app/frontend/pnpm-lock.yaml /app/pnpm-lock.yaml
 RUN mv /app/frontend/pnpm-workspace.yaml /app/pnpm-workspace.yaml
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
 WORKDIR /app/frontend
 RUN pnpm run build
 

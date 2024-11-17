@@ -8,7 +8,7 @@ WORKDIR /app
 COPY . /app/backend/chat-service
 RUN mv /app/backend/chat-service/pnpm-lock.yaml /app/pnpm-lock.yaml
 RUN mv /app/backend/chat-service/pnpm-workspace.yaml /app/pnpm-workspace.yaml
-RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --no-frozen-lockfile
 WORKDIR /app/backend/chat-service
 RUN pnpm run build
 
