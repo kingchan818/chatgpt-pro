@@ -4,7 +4,7 @@ import { filter, get, isEmpty } from 'lodash';
 
 import { ChatgptService } from '../chatgpt/chatgpt.service';
 import { TransactionService } from '../transaction/transaction.service';
-import { generateUniqueKey } from '../utils';
+import { generateUniqueKey, stringIncludesWithKeys } from '../utils';
 import { ChatService } from './chat.service';
 import { ChatDto } from './dto/chat.dto';
 import { HttpStatusCode } from 'axios';
@@ -29,35 +29,39 @@ export class ChatController {
   @Post('create')
   async createChatSession(@Req() req: any, @Body() body: ChatDto) {
     const { requestId, currentUser } = req;
-    const gptModelType = get(body, 'chatOptions.model', this.configService.get('chatgpt.completionParams.model'));
+    const gptModelType: string = get(body, 'chatOptions.model', this.configService.get('chatgpt.completionParams.model'));
 
     const collectionId = generateUniqueKey();
-    const sessionResult = await this.transactionService.create(requestId, [
-      {
-        messageId: generateUniqueKey(),
-        collectionId,
-        role: 'system',
-        apiTokenRef: currentUser.userApiKey,
-        message: !isEmpty(body.chatOptions?.systemMessage)
-          ? body.chatOptions.systemMessage
-          : this.configService.get('chatgpt.systemMessage'),
-        chatOptions: body.chatOptions,
-        tokenUsage: {},
-        llmType: gptModelType,
-        createdDT: moment().toISOString(),
-      },
-      {
-        messageId: generateUniqueKey(),
-        collectionId,
-        role: 'user',
-        apiTokenRef: currentUser.userApiKey,
-        message: body.message,
-        chatOptions: body.chatOptions,
-        tokenUsage: {},
-        llmType: gptModelType,
-        createdDT: moment().add(1, 'millisecond').toISOString(),
-      },
-    ]);
+    const systemMsg = {
+      messageId: generateUniqueKey(),
+      collectionId,
+      role: 'system',
+      apiTokenRef: currentUser.userApiKey,
+      message: !isEmpty(body.chatOptions?.systemMessage)
+        ? body.chatOptions.systemMessage
+        : this.configService.get('chatgpt.systemMessage'),
+      chatOptions: body.chatOptions,
+      tokenUsage: {},
+      llmType: gptModelType,
+      createdDT: moment().toISOString(),
+    };
+    const userMsg = {
+      messageId: generateUniqueKey(),
+      collectionId,
+      role: 'user',
+      apiTokenRef: currentUser.userApiKey,
+      message: body.message,
+      chatOptions: body.chatOptions,
+      tokenUsage: {},
+      llmType: gptModelType,
+      createdDT: moment().add(1, 'millisecond').toISOString(),
+    };
+    const chatHistory = [];
+    if (!stringIncludesWithKeys(gptModelType, ['o1'])) {
+      chatHistory.push(systemMsg);
+    }
+    chatHistory.push(userMsg);
+    const sessionResult = await this.transactionService.create(requestId, chatHistory);
     return sessionResult;
   }
 
@@ -76,11 +80,14 @@ export class ChatController {
     }
 
     const latestChatTransaction = foundTransactions[foundTransactions.length - 1];
+    const modelType = latestChatTransaction.llmType;
 
     const chatCompletion$ = this.chatgptService.createChatCompletion({
       requestId,
       openAIKey: currentUser.openAIKey,
-      temperature: (latestChatTransaction.chatOptions as any)?.temperature,
+      temperature: stringIncludesWithKeys(modelType, ['o1'])
+        ? undefined
+        : (latestChatTransaction.chatOptions as any)?.temperature,
       messages: foundTransactions.map((transaction) => ({
         role: transaction.role,
         content: transaction.message,
@@ -117,6 +124,6 @@ export class ChatController {
   async loadAllAvailableModels(@Req() req: any) {
     const { requestId, currentUser } = req;
     const { data } = await this.chatgptService.loadAvailableModels(requestId, currentUser.openAIKey);
-    return filter(data, (model) => model.id.includes('gpt'));
+    return filter(data, (model) => stringIncludesWithKeys(model.id, ['gpt', 'o1']));
   }
 }
