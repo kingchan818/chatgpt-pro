@@ -25,3 +25,17 @@ export const loadModels = async () => {
   const { data } = await chatCompletionService.get('model', { headers: { 'x-auth-key': localStorage.getItem('apiKey') } });
   return data;
 };
+
+export const fetchChatSessions = async () => {
+  const { data } = await chatCompletionService.get('sessions', {
+    headers: { 'x-auth-key': localStorage.getItem('apiKey') },
+  });
+  return data;
+};
+
+export const storeChatSession = async (session) => {
+  const { data } = await chatCompletionService.post('sessions', session, {
+    headers: { 'x-auth-key': localStorage.getItem('apiKey') },
+  });
+  return data;
+};

@@ -23,13 +23,20 @@ ChatSection.propTypes = {
       parentId: PropTypes.string,
     }),
   ).isRequired,
+  chatSessions: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      name: PropTypes.string.isRequired,
+    }),
+  ),
 };
 
 ChatSection.defaultProps = {
   width: '100%',
+  chatSessions: [],
 };
 
-function ChatSection({ width, messages = [], isProcessing, streamMessageText, streamMessageInfo }) {
+function ChatSection({ width, messages = [], isProcessing, streamMessageText, streamMessageInfo, chatSessions }) {
   const chatSecContentRef = useRef(null);
 
   useEffect(() => {
@@ -68,6 +75,17 @@ function ChatSection({ width, messages = [], isProcessing, streamMessageText, st
             messages={messages}
             messageIdx={messages.length}
           />
+        )}
+
+        {!isEmpty(chatSessions) && (
+          <div className="mt-4">
+            <h2 className="text-xl font-bold">Chat Sessions</h2>
+            <ul>
+              {chatSessions.map((session) => (
+                <li key={session.id}>{session.name}</li>
+              ))}
+            </ul>
+          </div>
         )}
       </div>
     </div>

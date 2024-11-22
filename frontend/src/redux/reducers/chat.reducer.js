@@ -3,7 +3,7 @@ import { fetchEventSource } from '@microsoft/fetch-event-source';
 import { isEmpty, get, isNil, omit } from 'lodash';
 import { transformHelper } from '../../utils';
 import { MAPPING_CONFIGS, ENDPOINTS } from '../../domain';
-import { continueChat, createChat } from '../../services/api/chat-completion';
+import { continueChat, createChat, fetchChatSessions } from '../../services/api/chat-completion';
 import { msg } from './test-data/chat';
 
 const createSSERequest = async (collectionId, thunkAPI) => {
@@ -68,6 +68,18 @@ export const handleSSEMessage = createAsyncThunk('chat/handleSSEMessage', async 
   }
 });
 
+export const fetchChatSessions = createAsyncThunk('chat/fetchChatSessions', async (_, thunkAPI) => {
+  try {
+    const data = await fetchChatSessions();
+    return data;
+  } catch (e) {
+    if (e.response?.data) {
+      return thunkAPI.rejectWithValue(e.response.data);
+    }
+    return thunkAPI.rejectWithValue(e);
+  }
+});
+
 const chatSlice = createSlice({
   name: 'chat',
   initialState: {
@@ -78,6 +90,8 @@ const chatSlice = createSlice({
     isProcessing: false,
     currentMessageDetails: null,
     currentCollectionId: null,
+    chatSessions: [],
+    isLoading: false,
     error: null,
   },
   reducers: {
@@ -105,7 +119,10 @@ const chatSlice = createSlice({
           streamInfo: {},
         };
       })
-      .addCase(handleSSEMessage.rejected, (state, action) => ({ ...state, isProcessing: false, error: action.payload }));
+      .addCase(handleSSEMessage.rejected, (state, action) => ({ ...state, isProcessing: false, error: action.payload }))
+      .addCase(fetchChatSessions.pending, (state) => ({ ...state, isLoading: true }))
+      .addCase(fetchChatSessions.fulfilled, (state, action) => ({ ...state, chatSessions: action.payload, isLoading: false }))
+      .addCase(fetchChatSessions.rejected, (state, action) => ({ ...state, isLoading: false, error: action.payload }));
   },
 });
 
